@@ -1,10 +1,16 @@
-import { useState } from 'react';
-import './App.css';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+import { useState } from "react";
+import "./App.css";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMapEvents,
+} from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+import icon from "leaflet/dist/images/marker-icon.png";
+import iconShadow from "leaflet/dist/images/marker-shadow.png";
 
 // Configuración de iconos
 const DefaultIcon = L.icon({
@@ -13,7 +19,7 @@ const DefaultIcon = L.icon({
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
-  shadowSize: [41, 41]
+  shadowSize: [41, 41],
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
@@ -35,29 +41,42 @@ function LocationMarker() {
     </Marker>
   );
 }
+import React from "react";
+import "./App.css";
+import SearchBar from "./components/SearchBar";
+import FilterDropdown from "./components/FilterDropdown";
 
 function App() {
   /* const initialPosition = [36.720, -4.420]; */
-  const initialPosition = [36.720, -6.420];
+  const initialPosition = [36.72, -6.42];
+  const handleFilterChange = (filters) => {
+    console.log("Filtros seleccionados:", filters);
+  };
 
   return (
-    <div className="map-container">
-      <MapContainer 
-        center={initialPosition} 
-        zoom={16} 
-        scrollWheelZoom={true}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <Marker position={initialPosition}>
-          <Popup>
-            A pretty CSS3 popup. <br /> Easily customizable.
-          </Popup>
-        </Marker>
-        <LocationMarker />
-      </MapContainer>
+    <div className="App">
+      <div className="top-bar">
+        <div className="filter-wrapper">
+          <FilterDropdown onFilterChange={handleFilterChange} />
+        </div>
+        <div className="search-wrapper">
+          <SearchBar />
+        </div>
+      </div>
+      <div className="map-container">
+        <MapContainer center={initialPosition} zoom={16} scrollWheelZoom={true}>
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <Marker position={initialPosition}>
+            <Popup>
+              A pretty CSS3 popup. <br /> Easily customizable.
+            </Popup>
+          </Marker>
+          <LocationMarker />
+        </MapContainer>
+      </div>
     </div>
   );
 }
