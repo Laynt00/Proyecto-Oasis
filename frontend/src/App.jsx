@@ -11,12 +11,15 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
-import './components/PopUpLogin'
 import PopUpLogin from './components/PopUpLogin'
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
+import SearchBar from "./components/SearchBar";
+import FilterDropdown from "./components/FilterDropdown";
 
-// Configuración de iconos
+function App() {
+
+  // Configuración de iconos
 const DefaultIcon = L.icon({
   iconUrl: icon,
   shadowUrl: iconShadow,
@@ -45,19 +48,7 @@ function LocationMarker() {
     </Marker>
   );
 }
-import React from "react";
-import "./App.css";
-import SearchBar from "./components/SearchBar";
-import FilterDropdown from "./components/FilterDropdown";
-import './App.css'
-import './components/PopUpLogin'
-import PopUpLogin from './components/PopUpLogin'
-import LoginPage from './components/LoginPage';
-import RegisterPage from './components/RegisterPage';
 
-import { useState } from "react";
-
-function App() {
   /* const initialPosition = [36.720, -4.420]; */
   const initialPosition = [36.72, -6.42];
   const handleFilterChange = (filters) => {
