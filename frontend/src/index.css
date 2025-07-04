@@ -1,3 +1,37 @@
+.popup-login{
+  width: 250px;
+  height: 350px;
+  background-color: rgb(255, 246, 206);
+  border: solid 1px black;
+  border-radius: 25px;
+  padding: 1em;
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin: 15px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.userIcon{
+  width: 100px;
+}
+
+.close-button{
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin: 1 0px;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+}
+
+.form-login{
+  background-color: grey;
+}
 body {
   margin: 0;
   padding: 0;

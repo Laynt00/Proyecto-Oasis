@@ -11,6 +11,10 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
+import './components/PopUpLogin'
+import PopUpLogin from './components/PopUpLogin'
+import LoginPage from './components/LoginPage';
+import RegisterPage from './components/RegisterPage';
 
 // Configuración de iconos
 const DefaultIcon = L.icon({
@@ -45,6 +49,13 @@ import React from "react";
 import "./App.css";
 import SearchBar from "./components/SearchBar";
 import FilterDropdown from "./components/FilterDropdown";
+import './App.css'
+import './components/PopUpLogin'
+import PopUpLogin from './components/PopUpLogin'
+import LoginPage from './components/LoginPage';
+import RegisterPage from './components/RegisterPage';
+
+import { useState } from "react";
 
 function App() {
   /* const initialPosition = [36.720, -4.420]; */
@@ -52,6 +63,7 @@ function App() {
   const handleFilterChange = (filters) => {
     console.log("Filtros seleccionados:", filters);
   };
+  const [view, setView] = useState("popup");
 
   return (
     <div className="App">
@@ -63,6 +75,11 @@ function App() {
           <SearchBar />
         </div>
       </div>
+      {view === "popup" && (
+        <PopUpLogin onLogin={() => setView("login")} onRegister={() => setView("register")} />
+      )}
+      {view === "login" && <LoginPage />}
+      {view === "register" && <RegisterPage />}
       <div className="map-container">
         <MapContainer center={initialPosition} zoom={16} scrollWheelZoom={true}>
           <TileLayer
