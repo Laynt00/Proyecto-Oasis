@@ -5,15 +5,17 @@ export default function PopUpLogin({ onLogin, onRegister }){
     return(
         <>
         <div className="popup-login">
-            <img src={userIcon} className="userIcon"/>
-            <p>USUARIO</p>
+            <figure>
+                <img src={userIcon} className="userIcon"/>
+                <figcaption>USUARIO</figcaption>
+            </figure>
             <div>
-                <p>Si no tienes una cuenta, regístrate</p>
-                <button onClick={onRegister}>Registrarse</button>
+                <p>¿Eres un nuevo usuario?</p>
+                <button className="popup-button" onClick={onRegister}>Registrarse</button>
             </div>
             <div>
-                <p>Si ya tienes una cuenta, inicia sesión</p>
-                <button onClick={onLogin}>Iniciar Sesión</button>
+                <p>¿Ya tienes una cuenta?</p>
+                <button className="popup-button" onClick={onLogin}>Iniciar Sesión</button>
             </div>
         </div>
         </>

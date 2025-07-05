@@ -43,8 +43,8 @@
 .popup-login{
   width: 250px;
   height: 350px;
-  background-color: rgb(255, 246, 206);
-  border: solid 1px black;
+  background-color: rgb(255, 249, 220);
+  border: solid 2px rgb(207, 193, 137);
   border-radius: 25px;
   padding: 1em;
   position: fixed;
@@ -56,10 +56,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
+  justify-content: space-around;
 }
 
 .userIcon{
   width: 100px;
+}
+
+.popup-button{
+  margin-top: 15px;
 }
 
 .close-button{
