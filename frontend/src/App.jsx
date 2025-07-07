@@ -22,7 +22,6 @@ import userIcon from './assets/userIcon.png';
 function App() {
   // Estado para mostrar/ocultar el popup
   const [showLoginPopup, setShowLoginPopup] = useState(false);
-  const [view, setView] = useState("popup");
 
   // Configuración de iconos de Leaflet
   const DefaultIcon = L.icon({
@@ -78,7 +77,9 @@ function App() {
         </div>
       </div>
       
-      <PopUpLogin />
+      {showLoginPopup && (
+        <PopUpLogin onClose={() => setShowLoginPopup(false)} />
+      )}
 
       <div className="map-container">
         <MapContainer center={initialPosition} zoom={16} scrollWheelZoom={true}>
