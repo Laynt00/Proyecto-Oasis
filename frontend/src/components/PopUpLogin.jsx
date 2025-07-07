@@ -1,19 +1,21 @@
 import userIcon from "../assets/userIcon.png"
 
-export default function PopUpLogin({ onLogin, onRegister }){
+export default function PopUpLogin(){
 
     return(
         <>
         <div className="popup-login">
-            <img src={userIcon} className="userIcon"/>
-            <p>USUARIO</p>
+            <figure className="user-appearance">
+                <img src={userIcon} className="userIcon"/>
+                <figcaption>USUARIO NO REGISTRADO</figcaption>
+            </figure>
             <div>
-                <p>Si no tienes una cuenta, regístrate</p>
-                <button onClick={onRegister}>Registrarse</button>
+                <p>¿Eres un nuevo usuario?</p>
+                <button className="popup-button">Registrarse</button>
             </div>
             <div>
-                <p>Si ya tienes una cuenta, inicia sesión</p>
-                <button onClick={onLogin}>Iniciar Sesión</button>
+                <p>¿Ya tienes una cuenta?</p>
+                <button className="popup-button">Iniciar Sesión</button>
             </div>
         </div>
         </>

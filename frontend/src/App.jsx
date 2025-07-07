@@ -54,7 +54,6 @@ function App() {
   const handleFilterChange = (filters) => {
     console.log("Filtros seleccionados:", filters);
   };
-  const [view, setView] = useState("popup");
 
   return (
     <div className="App">
@@ -67,11 +66,7 @@ function App() {
         </div>
       </div>
       
-      {view === "popup" && (
-        <PopUpLogin onLogin={() => setView("login")} onRegister={() => setView("register")} />
-      )}
-      {view === "login" && <LoginPage />}
-      {view === "register" && <RegisterPage />}
+      <PopUpLogin />
 
       <div className="map-container">
         <MapContainer center={initialPosition} zoom={16} scrollWheelZoom={true}>
