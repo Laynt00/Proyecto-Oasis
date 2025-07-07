@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import {
   MapContainer,
@@ -6,18 +6,82 @@ import {
   Marker,
   Popup,
   useMapEvents,
+  GeoJSON
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
-import PopUpLogin from './components/PopUpLogin'
+import PopUpLogin from './components/PopUpLogin';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
 import SearchBar from "./components/SearchBar";
 import FilterDropdown from "./components/FilterDropdown";
+import proj4 from "proj4";
+
+// Configuración de proj4 para conversión de coordenadas UTM a WGS84
+proj4.defs(
+  "EPSG:25830",
+  "+proj=utm +zone=30 +ellps=GRS80 +units=m +no_defs"
+);
 
 function App() {
+  const [fuentes, setFuentes] = useState([]);
+  const [geoJsonData, setGeoJsonData] = useState(null);
+  
+  // Tu feature de ejemplo (Coors Field)
+  const geojsonFeature = {
+    "type": "Feature",
+    "properties": {
+      "name": "Coors Field",
+      "amenity": "Baseball Stadium",
+      "popupContent": "This is where the Rockies play!"
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [-104.99404, 39.75621]
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch("/apidata/dataFuentes.geojson");
+      const geojson = await response.json();
+
+      // Procesamiento para el estado fuentes (manteniendo tu lógica original)
+      const datosProcesados = geojson.features.map(feature => ({
+        nombre: feature.properties.nombre,
+        coordenadas: feature.geometry.coordinates
+      }));
+      setFuentes(datosProcesados);
+
+      // Procesamiento para GeoJSON con conversión de coordenadas
+      const convertedFeatures = geojson.features.map((feature) => {
+        const [x, y] = feature.geometry.coordinates;
+        const [lon, lat] = proj4("EPSG:25830", "WGS84", [x, y]);
+        
+        return {
+          ...feature,
+          geometry: {
+            ...feature.geometry,
+            coordinates: [lon, lat]
+          }
+        };
+      });
+
+      setGeoJsonData({
+        ...geojson,
+        features: convertedFeatures
+      });
+
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   // Configuración de iconos
   const DefaultIcon = L.icon({
@@ -29,6 +93,20 @@ function App() {
     shadowSize: [41, 41],
   });
   L.Marker.prototype.options.icon = DefaultIcon;
+
+  // Función para personalizar cada feature del GeoJSON
+  const onEachFeature = (feature, layer) => {
+    if (feature.properties && feature.properties.nombre) {
+      layer.bindPopup(`<b>${feature.properties.nombre}</b>`);
+    }
+  };
+
+  // Función para convertir puntos a markers con icono personalizado
+  const pointToLayer = (feature, latlng) => {
+    return L.marker(latlng, {
+      icon: DefaultIcon
+    });
+  };
 
   function LocationMarker() {
     const [position, setPosition] = useState(null);
@@ -49,7 +127,6 @@ function App() {
     );
   }
 
-  /* const initialPosition = [36.720, -4.420]; */
   const initialPosition = [36.72, -6.42];
   const handleFilterChange = (filters) => {
     console.log("Filtros seleccionados:", filters);
@@ -66,7 +143,7 @@ function App() {
           <SearchBar />
         </div>
       </div>
-      
+
       {view === "popup" && (
         <PopUpLogin onLogin={() => setView("login")} onRegister={() => setView("register")} />
       )}
@@ -85,6 +162,15 @@ function App() {
             </Popup>
           </Marker>
           <LocationMarker />
+          
+          {/* GeoJSON de las fuentes de agua */}
+          {geoJsonData && (
+            <GeoJSON
+              data={geoJsonData}
+              onEachFeature={onEachFeature}
+              pointToLayer={pointToLayer}
+            />
+          )}
         </MapContainer>
       </div>
     </div>
