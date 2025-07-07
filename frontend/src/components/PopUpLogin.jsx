@@ -1,10 +1,8 @@
-import { useNavigate } from "react-router-dom";
 import userIcon from "../assets/userIcon.png"
 import { useEffect, useRef } from "react";
 
 export default function PopUpLogin({ onClose }){
     const popupRef = useRef(null);
-    const navigate = useNavigate();
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -28,11 +26,11 @@ export default function PopUpLogin({ onClose }){
             </figure>
             <div>
                 <p>¿Eres un nuevo usuario?</p>
-                <button className="popup-button" onClick={() => navigate("/register")}>Registrarse</button>
+                <button className="popup-button">Registrarse</button>
             </div>
             <div>
                 <p>¿Ya tienes una cuenta?</p>
-                <button className="popup-button" onClick={() => navigate("/login")}>Iniciar Sesión</button>
+                <button className="popup-button">Iniciar Sesión</button>
             </div>
         </div>
         </>
