@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import "./App.css";
 import {
   MapContainer,
@@ -11,18 +12,40 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
-import PopUpLogin from './components/PopUpLogin'
+import PopUpLogin from './components/PopUpLogin';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
 import SearchBar from "./components/SearchBar";
 import FilterDropdown from "./components/FilterDropdown";
 import userIcon from './assets/userIcon.png';
 
+function LocationMarker() {
+  const [position, setPosition] = useState(null);
+  const map = useMapEvents({
+    click() {
+      map.locate();
+    },
+    locationfound(e) {
+      setPosition(e.latlng);
+      map.flyTo(e.latlng, map.getZoom());
+    },
+  });
 
-function App() {
-  // Estado para mostrar/ocultar el popup
+  return position === null ? null : (
+    <Marker position={position}>
+      <Popup>You are here</Popup>
+    </Marker>
+  );
+}
+
+function Home() {
   const [showLoginPopup, setShowLoginPopup] = useState(false);
-  const [view, setView] = useState("popup");
+  const navigate = useNavigate();
+  const initialPosition = [36.72, -6.42];
+
+  const handleFilterChange = (filters) => {
+    console.log("Filtros seleccionados:", filters);
+  };
 
   // Configuración de iconos de Leaflet
   const DefaultIcon = L.icon({
@@ -35,32 +58,8 @@ function App() {
   });
   L.Marker.prototype.options.icon = DefaultIcon;
 
-  function LocationMarker() {
-    const [position, setPosition] = useState(null);
-    const map = useMapEvents({
-      click() {
-        map.locate();
-      },
-      locationfound(e) {
-        setPosition(e.latlng);
-        map.flyTo(e.latlng, map.getZoom());
-      },
-    });
-
-    return position === null ? null : (
-      <Marker position={position}>
-        <Popup>You are here</Popup>
-      </Marker>
-    );
-  }
-
-  const initialPosition = [36.72, -6.42];
-  const handleFilterChange = (filters) => {
-    console.log("Filtros seleccionados:", filters);
-  };
-
   return (
-    <div className="App">
+    <>
       <div className="top-bar">
         <div className="filter-wrapper">
           <FilterDropdown onFilterChange={handleFilterChange} />
@@ -80,13 +79,10 @@ function App() {
 
       {showLoginPopup && (
         <PopUpLogin
-          onLogin={() => setView("login")}
-          onRegister={() => setView("register")}
+          onLogin={() => navigate("/login")}
+          onRegister={() => navigate("/register")}
         />
       )}
-
-      {view === "login" && <LoginPage />}
-      {view === "register" && <RegisterPage />}
 
       <div className="map-container">
         <MapContainer center={initialPosition} zoom={16} scrollWheelZoom={true}>
@@ -102,7 +98,17 @@ function App() {
           <LocationMarker />
         </MapContainer>
       </div>
-    </div>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+    </Routes>
   );
 }
 
