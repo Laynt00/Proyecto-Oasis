@@ -1,3 +1,4 @@
+/* ESTILOS PAGINA PRINCIPAL */
 .leaflet-container {
   height: 100vh;
   width: 100vw;
@@ -119,6 +120,7 @@
   top:1px;
 }
 
+/* ESTILOS LOGIN PAGE */
 .close-button {
   position: fixed;
   top: 0;
@@ -130,6 +132,17 @@
   cursor: pointer;
 }
 
-.form-login {
-  background-color: grey;
+.login-page-div {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+
+}
+
+.div-register, .div-login-form{
+  width: 50%;
+  height: 100vh;
+    justify-content: center;
+  align-items: center; 
+  text-align: center;
 }

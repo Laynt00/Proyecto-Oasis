@@ -53,14 +53,14 @@ function App() {
     );
   }
 
-  const initialPosition = [36.72, -6.42];
-  const handleFilterChange = (filters) => {
-    console.log("Filtros seleccionados:", filters);
-  };
+  // const initialPosition = [36.72, -6.42];
+  // const handleFilterChange = (filters) => {
+  //   console.log("Filtros seleccionados:", filters);
+  // };
 
   return (
     <div className="App">
-      <div className="top-bar">
+      {/* <div className="top-bar">
         <div className="filter-wrapper">
           <FilterDropdown onFilterChange={handleFilterChange} />
         </div>
@@ -94,7 +94,9 @@ function App() {
           </Marker>
           <LocationMarker />
         </MapContainer>
-      </div>
+      </div> */}
+
+      <LoginPage />
     </div>
   );
 }
