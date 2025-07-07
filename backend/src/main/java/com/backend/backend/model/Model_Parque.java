@@ -10,7 +10,7 @@ public class Model_Parque {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int ID;
+    private Long ID;
 
     private String nombre;
     private String descripcion;
@@ -24,6 +24,10 @@ public class Model_Parque {
     }
 
     //GETTERS
+    public Long getID() {
+        return ID;
+    }
+
     public String getNombre(){
         return nombre;
     }
@@ -33,6 +37,10 @@ public class Model_Parque {
     }
 
     //SETTERS
+    public void setId(Long ID) {
+        this.ID = ID;
+    }
+
     public void setNombre(String nombre){
         this.nombre = nombre;
     }

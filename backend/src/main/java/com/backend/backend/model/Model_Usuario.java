@@ -1,9 +1,6 @@
 package com.backend.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Model_Usuario {
@@ -14,6 +11,10 @@ public class Model_Usuario {
 
     private String nombre;
     private String descripcion;
+
+    @OneToMany(mappedBy = "Usuario", cascade = CascadeType.ALL, orphanRemoval = true )
+    private List<Model_Comentario> comentarios;
+
 
     //Constructor vacío
     public Model_Usuario(){}
