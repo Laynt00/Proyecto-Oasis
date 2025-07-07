@@ -16,10 +16,15 @@ import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
 import SearchBar from "./components/SearchBar";
 import FilterDropdown from "./components/FilterDropdown";
+import userIcon from './assets/userIcon.png';
+
 
 function App() {
+  // Estado para mostrar/ocultar el popup
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [view, setView] = useState("popup");
 
-  // Configuración de iconos
+  // Configuración de iconos de Leaflet
   const DefaultIcon = L.icon({
     iconUrl: icon,
     shadowUrl: iconShadow,
@@ -49,12 +54,10 @@ function App() {
     );
   }
 
-  /* const initialPosition = [36.720, -4.420]; */
   const initialPosition = [36.72, -6.42];
   const handleFilterChange = (filters) => {
     console.log("Filtros seleccionados:", filters);
   };
-  const [view, setView] = useState("popup");
 
   return (
     <div className="App">
@@ -65,11 +68,23 @@ function App() {
         <div className="search-wrapper">
           <SearchBar />
         </div>
+        <div className="user-wrapper">
+          <img
+            src={userIcon}
+            className="user-icon"
+            alt="Usuario"
+            onClick={() => setShowLoginPopup(!showLoginPopup)}
+          />
+        </div>
       </div>
-      
-      {view === "popup" && (
-        <PopUpLogin onLogin={() => setView("login")} onRegister={() => setView("register")} />
+
+      {showLoginPopup && (
+        <PopUpLogin
+          onLogin={() => setView("login")}
+          onRegister={() => setView("register")}
+        />
       )}
+
       {view === "login" && <LoginPage />}
       {view === "register" && <RegisterPage />}
 

@@ -17,22 +17,52 @@
 }
 
 .top-bar {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: center;
   gap: 10px;
-  margin-top: 40px;
-  z-index: 1000;
   position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  z-index: 1000;
 }
 
-.filter-wrapper,
+.filter-wrapper {
+  display: flex;
+  justify-content: flex-start;
+}
+
 .search-wrapper {
   display: flex;
-  align-items: center;
+  justify-content: center;
 }
 
-.map-container{
+.user-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.user-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
+  background-color: white;
+  padding: 5px;
+  transition: transform 0.2s;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.user-icon:hover {
+  transform: scale(1.1);
+  border-color: #888;
+}
+
+.map-container {
   position: absolute;
   top: 0;
   left: 0;
@@ -40,38 +70,48 @@
   width: 100%;
 }
 
-.popup-login{
+.popup-login {
+  position: absolute;
+  top: 60px; /* debajo del icono */
+  right: 0;
   width: 250px;
-  height: 350px;
+  height: auto;
   background-color: rgb(255, 246, 206);
   border: solid 1px black;
-  border-radius: 25px;
+  border-radius: 15px;
   padding: 1em;
-  position: fixed;
-  top: 0;
-  right: 0;
-  margin: 15px;
   z-index: 1000;
-
   display: flex;
   flex-direction: column;
   align-items: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-.userIcon{
+.popup-login::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  right: 15px;
+  border-width: 0 10px 10px 10px;
+  border-style: solid;
+  border-color: transparent transparent rgb(255, 246, 206) transparent;
+}
+
+.userIcon {
   width: 100px;
 }
 
-.close-button{
+.close-button {
   position: fixed;
   top: 0;
   right: 0;
-  margin: 1 0px;
+  margin: 10px;
   width: 30px;
   height: 30px;
   text-align: center;
+  cursor: pointer;
 }
 
-.form-login{
+.form-login {
   background-color: grey;
 }
