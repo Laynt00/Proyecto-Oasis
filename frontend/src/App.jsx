@@ -29,26 +29,12 @@ function App() {
   const [fuentes, setFuentes] = useState([]);
   const [geoJsonData, setGeoJsonData] = useState(null);
   
-  // Tu feature de ejemplo (Coors Field)
-  const geojsonFeature = {
-    "type": "Feature",
-    "properties": {
-      "name": "Coors Field",
-      "amenity": "Baseball Stadium",
-      "popupContent": "This is where the Rockies play!"
-    },
-    "geometry": {
-      "type": "Point",
-      "coordinates": [-104.99404, 39.75621]
-    }
-  };
-
   const fetchData = async () => {
     try {
       const response = await fetch("/apidata/dataFuentes.geojson");
       const geojson = await response.json();
 
-      // Procesamiento para el estado fuentes (manteniendo tu lógica original)
+      // Procesamiento para el estado fuentes
       const datosProcesados = geojson.features.map(feature => ({
         nombre: feature.properties.nombre,
         coordenadas: feature.geometry.coordinates
