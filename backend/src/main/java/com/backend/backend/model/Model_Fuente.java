@@ -1,10 +1,15 @@
 package com.backend.backend.model;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name="Fuentes")
 public class Model_Fuente {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int ID;
+
     private String nombre;
     private String descripcion;
 

@@ -22,7 +22,11 @@ public class Service_Banco {
         return repositoryBanco.findById(ID);
     }
 
-    public Model_Banco save(Model_Banco banco) {
+    public Model_Banco crear(Model_Banco banco) {
+        return repositoryBanco.save(banco);
+    }
+
+    public Model_Banco actualizar(Long id, Model_Banco banco) {
         return repositoryBanco.save(banco);
     }
 

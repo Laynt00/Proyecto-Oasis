@@ -22,7 +22,9 @@ public class Service_Fuente {
         return repositoryFuente.findById(ID);
     }
 
-    public Model_Fuente save(Model_Fuente fuente) {
+    public Model_Fuente crear(Model_Fuente fuente) { return repositoryFuente.save(fuente);}
+
+    public Model_Fuente actualizar(Long id, Model_Fuente fuente) {
         return repositoryFuente.save(fuente);
     }
 
