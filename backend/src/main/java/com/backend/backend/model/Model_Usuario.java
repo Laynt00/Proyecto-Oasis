@@ -2,6 +2,8 @@ package com.backend.backend.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class Model_Usuario {
 
