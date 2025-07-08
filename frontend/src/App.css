@@ -72,13 +72,12 @@
 
 .popup-login {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 15px;
+  right: 15px;
   width: 250px;
   height: 350px;
   background-color: white;
-  box-shadow: 1px 1px 30px #482e16;
-  border: 1px solid black;
+  border: 2px solid rgb(179, 179, 179);
   border-radius: 25px;
   padding: 1em;
   z-index: 1000;
@@ -87,7 +86,6 @@
   align-items: center;
   text-align: center;
   justify-content: space-around;
-  box-shadow: 1px 1px 20px black;
 }
 
 .userIcon {
