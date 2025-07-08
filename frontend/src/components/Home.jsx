@@ -18,6 +18,10 @@ import RegisterPage from './RegisterPage';
 import SearchBar from "./SearchBar";
 import FilterDropdown from "./FilterDropdown";
 import userIcon from '../assets/userIcon.png';
+import WelcomePage from './WelcomePage';
+
+
+
 
 import proj4 from "proj4";
 
