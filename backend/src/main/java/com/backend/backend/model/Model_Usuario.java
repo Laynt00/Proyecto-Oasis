@@ -15,7 +15,7 @@ public class Model_Usuario {
     private String descripcion;
 
     @OneToMany(mappedBy = "Usuario", cascade = CascadeType.ALL, orphanRemoval = true )
-    private List<Model_Comentario> comentarios;
+    private List<Model_Comentario> comentario;
 
 
     //Constructor vacío
@@ -39,6 +39,10 @@ public class Model_Usuario {
         return descripcion;
     }
 
+    public List<Model_Comentario> getComentario() {
+        return comentario;
+    }
+
     //SETTERS
     public void setId(Long ID) {
         this.ID = ID;
@@ -50,5 +54,8 @@ public class Model_Usuario {
 
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
+    public void setComentario(List<Model_Comentario> comentario) {
+        this.comentario = comentario;
+    }
 
 }

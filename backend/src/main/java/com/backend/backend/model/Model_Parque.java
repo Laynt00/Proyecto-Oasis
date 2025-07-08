@@ -1,9 +1,8 @@
 package com.backend.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 public class Model_Parque {
@@ -14,6 +13,9 @@ public class Model_Parque {
 
     private String nombre;
     private String descripcion;
+
+    @OneToMany(mappedBy = "Parque", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Model_Comentario> comentario;
 
     //Constructor vacío
     public Model_Parque(){}
@@ -36,6 +38,10 @@ public class Model_Parque {
         return descripcion;
     }
 
+    public List<Model_Comentario> getComentario() {
+        return comentario;
+    }
+
     //SETTERS
     public void setId(Long ID) {
         this.ID = ID;
@@ -47,5 +53,9 @@ public class Model_Parque {
 
     public void setDescripcion(String descripcion){
         this.descripcion = descripcion;
+    }
+
+    public void setComentario(List<Model_Comentario> comentario) {
+        this.comentario = comentario;
     }
 }

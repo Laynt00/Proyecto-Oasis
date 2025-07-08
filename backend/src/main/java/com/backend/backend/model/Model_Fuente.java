@@ -2,8 +2,10 @@ package com.backend.backend.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
-@Table(name="Fuentes")
+@Table(name="Fuente")
 public class Model_Fuente {
 
     @Id
@@ -11,14 +13,21 @@ public class Model_Fuente {
     private Long ID;
 
     private String nombre;
-    private String descripcion;
+    private double x;
+    private double y;
+
+
+    //Relacion
+    @OneToMany(mappedBy = "Fuente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Model_Comentario> comentario;
 
     //Constructor vacío
     public Model_Fuente(){}
 
-    public Model_Fuente(String nombre, String descripcion){
+    public Model_Fuente(String nombre, double x, double y){
         this.nombre = nombre;
-        this.descripcion = descripcion;
+        this.x = x;
+        this.y = y;
     }
 
     //GETTERS
@@ -30,9 +39,18 @@ public class Model_Fuente {
         return nombre;
     }
 
-    public String getDescripcion(){
-        return descripcion;
+    public double getX() {
+        return x;
     }
+
+    public double getY() {
+        return y;
+    }
+
+    public List<Model_Comentario> getComentario() {
+        return comentario;
+    }
+
 
     //SETTERS
     public void setId(Long ID) {
@@ -43,7 +61,16 @@ public class Model_Fuente {
         this.nombre = nombre;
     }
 
-    public void setDescripcion(String descripcion){
-        this.descripcion = descripcion;
+    public void setX(double x){
+        this.x = x;
     }
+
+    public void setY(double y){
+        this.y = y;
+    }
+
+    public void setComentario(List<Model_Comentario> comentario) {
+        this.comentario = comentario;
+    }
+
 }
