@@ -20,9 +20,6 @@ import FilterDropdown from "./FilterDropdown";
 import userIcon from '../assets/userIcon.png';
 import WelcomePage from './WelcomePage';
 
-
-
-
 import proj4 from "proj4";
 
 // Configuración de proj4 para conversión de coordenadas UTM a WGS84
@@ -91,9 +88,23 @@ function Home(){
 
     // Función para personalizar cada feature del GeoJSON
     const onEachFeature = (feature, layer) => {
-    if (feature.properties && feature.properties.nombre) {
-        layer.bindPopup(`<b>${feature.properties.nombre}</b>`);
-    }
+      if (feature.properties && feature.properties.nombre) {
+        const popupContent = `
+          <div>
+            <b>${feature.properties.nombre}</b>
+            <button class="more-info-btn" style="
+              margin-top: 8px;
+              padding: 4px 8px;
+              background-color: #4CAF50;
+              color: white;
+              border: none;
+              border-radius: 4px;
+              cursor: pointer;
+            ">+info</button>
+          </div>
+        `;
+        layer.bindPopup(popupContent);
+      }
     };
 
     // Función para convertir puntos a markers con icono personalizado
