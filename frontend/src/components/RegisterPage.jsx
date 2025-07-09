@@ -1,20 +1,14 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import nameIcon from "../assets/nameIcon.png"
 import emailIcon from "../assets/emailIcon.png"
 import passwordIcon from "../assets/passwordIcon.png"
-import closeButton from "../assets/closeButton.png"
-import closeButtonHover from "../assets/closeButtonHover.png"
 
 export default function RegisterPage(){
     const navigate = useNavigate();
-    const [isHover, setHover] = useState(false);
 
     return(
         <div className="register-page-div">
-            <button className="close-button" onClick={() => navigate("/home")} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-                <img src={isHover ? closeButtonHover : closeButton} className="close-button-image"/>
-            </button>
+            <button className="back-to-map" onClick={() => navigate("/home")}>Volver al mapa</button>
             <div className="div-register-form">
                 <p>Registrarse</p>
                 <form className="form-register">

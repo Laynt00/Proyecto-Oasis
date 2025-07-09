@@ -1,44 +1,52 @@
-/* Reset básico */
-* {
-  margin: 0;
-  padding: 0;
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+.welcome-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 15px;
+  padding: 40px;
+  max-width: 1400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100vh;
-  background: linear-gradient(to right, #e0f7fa, #fefcea);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+.content-row {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+  margin-top: 30px;
+}
+
+.gallery-div, .buttons-div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-.welcome-container {
-    position: relative; /* Para posicionar el logo */
-  background: white;
-  border-radius: 15px;
-  padding: 40px;
-  max-width: 1000px;
-  width: 95%;
-  text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  box-sizing: border-box;
-  margin: 100px auto; /* Añade margen arriba y abajo */
+.web-title{
+  display: inline-block;
+  font-family: 'Pacifico', cursive;
+  background: linear-gradient(to right, #deb438, #009990);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  font-size: 45px;
 }
-
 
 /* Logo React */
-.welcome-container img.logo {
-  width: 150px;           
-  position: absolute;   
-  top: 20px;              
-  right: 40px;           
-  transition: transform 0.3s ease; 
+.logo {
+  width: 150px;
+  transition: transform 0.3s ease;
+  margin-bottom: 60px;
 }
-
 
 .welcome-container img.logo:hover {
   transform: scale(1.1); 
@@ -108,17 +116,17 @@ html, body {
 .welcome-buttons {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centra horizontalmente */
+  align-items: center;
   gap: 1rem;
 }
 
 .welcome-buttons button {
-  width: 250px;       /* Mismo ancho fijo */
-  height: 50px;       /* Mismo alto fijo */
-  padding: 0;         /* Anula padding individual si afecta */
+  width: 200px;
+  height: 50px;
+  padding: 0.7rem 2rem;
   font-size: 1rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 25px;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
