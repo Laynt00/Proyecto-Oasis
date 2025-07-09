@@ -12,18 +12,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class DataLoader implements CommandLineRunner {
+public class DataLoader_Fuente implements CommandLineRunner {
 
     private final Repository_Fuente repo;
     private final ObjectMapper objectMapper;
 
-    public DataLoader(Repository_Fuente repo) {
+    public DataLoader_Fuente(Repository_Fuente repo) {
         this.repo = repo;
         this.objectMapper = new ObjectMapper();
     }
 
     @Override
     public void run(String... args) throws Exception {
+        if (repo.count() > 0){
+            return;
+        }
         InputStream is = getClass().getResourceAsStream("/Fuentes.json");
         JsonNode root = objectMapper.readTree(is);
         JsonNode features = root.get("features");
