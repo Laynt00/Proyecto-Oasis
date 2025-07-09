@@ -1,9 +1,7 @@
 package com.backend.backend.service;
 
 
-import com.backend.backend.model.Model_Comentario;
-import com.backend.backend.model.Model_Fuente;
-import com.backend.backend.repository.Repository_Banco;
+import com.backend.backend.model.Comentario;
 import com.backend.backend.repository.Repository_Comentario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,19 +15,19 @@ public class Service_Comentario {
     @Autowired
     private Repository_Comentario repositoryComentario;
 
-    public List<Model_Comentario> findAll(){
+    public List<Comentario> findAll(){
         return repositoryComentario.findAll();
     }
 
-    public Optional<Model_Comentario> findById(Long ID) {
+    public Optional<Comentario> findById(Long ID) {
         return repositoryComentario.findById(ID);
     }
 
-    public Model_Comentario crear(Model_Comentario comentario){
+    public Comentario crear(Comentario comentario){
         return repositoryComentario.save(comentario);
     }
 
-    public Model_Comentario actualizar(Long id, Model_Comentario comentario){
+    public Comentario actualizar(Long id, Comentario comentario){
         return repositoryComentario.save(comentario);
     }
 

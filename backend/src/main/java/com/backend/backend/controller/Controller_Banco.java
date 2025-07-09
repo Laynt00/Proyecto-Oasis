@@ -1,7 +1,7 @@
 package com.backend.backend.controller;
 
 
-import com.backend.backend.model.Model_Banco;
+import com.backend.backend.model.Banco;
 import com.backend.backend.service.Service_Banco;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,20 +18,20 @@ public class Controller_Banco {
 
     //GET de bancos (de sentarse)
     @GetMapping
-    public List<Model_Banco> getAllBancos() {
+    public List<Banco> getAllBancos() {
         return serviceBanco.findAll();
     }
 
     //POST de bancos
     @PostMapping
-    public Model_Banco crear (@RequestBody Model_Banco modelBanco) {
-        return serviceBanco.crear(modelBanco);
+    public Banco crear (@RequestBody Banco banco) {
+        return serviceBanco.crear(banco);
     }
 
     //PUT de bancos
     @PutMapping("/{ID}")
-    public Model_Banco actualizar(@PathVariable Long id, @RequestBody Model_Banco modelBanco) {
-        return serviceBanco.actualizar(id, modelBanco);
+    public Banco actualizar(@PathVariable Long id, @RequestBody Banco banco) {
+        return serviceBanco.actualizar(id, banco);
     }
 
     //DELETE de bancos

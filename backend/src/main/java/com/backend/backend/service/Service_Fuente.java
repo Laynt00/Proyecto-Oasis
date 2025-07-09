@@ -1,6 +1,6 @@
 package com.backend.backend.service;
 
-import com.backend.backend.model.Model_Fuente;
+import com.backend.backend.model.Fuente;
 import com.backend.backend.repository.Repository_Fuente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,17 +14,17 @@ public class Service_Fuente {
     @Autowired
     private Repository_Fuente repositoryFuente;
 
-    public List<Model_Fuente> findAll() {
+    public List<Fuente> findAll() {
         return repositoryFuente.findAll();
     }
 
-    public Optional<Model_Fuente> findById(Long ID) {
+    public Optional<Fuente> findById(Long ID) {
         return repositoryFuente.findById(ID);
     }
 
-    public Model_Fuente crear(Model_Fuente fuente) { return repositoryFuente.save(fuente);}
+    public Fuente crear(Fuente fuente) { return repositoryFuente.save(fuente);}
 
-    public Model_Fuente actualizar(Long id, Model_Fuente fuente) {
+    public Fuente actualizar(Long id, Fuente fuente) {
         return repositoryFuente.save(fuente);
     }
 

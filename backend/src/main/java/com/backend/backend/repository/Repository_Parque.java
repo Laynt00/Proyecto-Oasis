@@ -1,6 +1,6 @@
 package com.backend.backend.repository;
 
-import com.backend.backend.model.Model_Parque;
+import com.backend.backend.model.Parque;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface Repository_Parque extends JpaRepository<Model_Parque, Long> {}
+public interface Repository_Parque extends JpaRepository<Parque, Long> {}

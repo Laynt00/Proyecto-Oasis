@@ -1,7 +1,7 @@
 package com.backend.backend.controller;
 
 
-import com.backend.backend.model.Model_Usuario;
+import com.backend.backend.model.Usuario;
 import com.backend.backend.service.Service_Usuario;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,20 +18,20 @@ public class Controller_Usuario {
 
     //GET de usuario
     @GetMapping
-    public List<Model_Usuario> verTodas() {
+    public List<Usuario> verTodas() {
         return serviceUsuario.findAll();
     }
 
     //POST de usuario
     @PostMapping
-    public Model_Usuario crear (@RequestBody Model_Usuario modelUsuario) {
-        return serviceUsuario.crear(modelUsuario);
+    public Usuario crear (@RequestBody Usuario usuario) {
+        return serviceUsuario.crear(usuario);
     }
 
     //PUT de usuario
     @PutMapping("/{ID}")
-    public Model_Usuario actualizar(@PathVariable Long id, @RequestBody Model_Usuario modelUsuario) {
-        return  serviceUsuario.actualizar(id, modelUsuario);
+    public Usuario actualizar(@PathVariable Long id, @RequestBody Usuario usuario) {
+        return  serviceUsuario.actualizar(id, usuario);
     }
 
     //DELETE de usuario

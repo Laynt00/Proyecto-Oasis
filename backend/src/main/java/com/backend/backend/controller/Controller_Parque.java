@@ -1,8 +1,7 @@
 package com.backend.backend.controller;
 
 
-import com.backend.backend.model.Model_Fuente;
-import com.backend.backend.model.Model_Parque;
+import com.backend.backend.model.Parque;
 import com.backend.backend.service.Service_Parque;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,20 +18,20 @@ public class Controller_Parque {
 
     //GET de parques
     @GetMapping
-    public List<Model_Parque> verTodos() {
+    public List<Parque> verTodos() {
         return serviceParque.findAll();
     }
 
     //POST de parques
     @PostMapping
-    public Model_Parque crear(@RequestBody Model_Parque modelParque) {
-        return serviceParque.crear(modelParque);
+    public Parque crear(@RequestBody Parque parque) {
+        return serviceParque.crear(parque);
     }
 
     //PUT de parques
     @PutMapping("/{ID}")
-    public Model_Parque actualizar(@PathVariable Long id, @RequestBody Model_Parque modelParque) {
-        return serviceParque.actualizar(id, modelParque);
+    public Parque actualizar(@PathVariable Long id, @RequestBody Parque parque) {
+        return serviceParque.actualizar(id, parque);
     }
 
     //DELETE de parques

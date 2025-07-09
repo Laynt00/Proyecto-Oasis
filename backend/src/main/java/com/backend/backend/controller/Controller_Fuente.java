@@ -1,7 +1,7 @@
 package com.backend.backend.controller;
 
 
-import com.backend.backend.model.Model_Fuente;
+import com.backend.backend.model.Fuente;
 import com.backend.backend.service.Service_Fuente;
 
 import org.springframework.web.bind.annotation.*;
@@ -19,20 +19,20 @@ public class Controller_Fuente {
 
     //GET de fuentes
     @GetMapping
-    public List<Model_Fuente> verTodas() {
+    public List<Fuente> verTodas() {
         return serviceFuente.findAll();
     }
 
     //POST de fuentes
     @PostMapping
-    public Model_Fuente crear (@RequestBody Model_Fuente modelFuente) {
-        return serviceFuente.crear(modelFuente);
+    public Fuente crear (@RequestBody Fuente fuente) {
+        return serviceFuente.crear(fuente);
     }
 
     //PUT de fuentes
     @PutMapping("/{ID}")
-    public Model_Fuente actualizar(@PathVariable Long id, @RequestBody Model_Fuente modelFuente) {
-        return  serviceFuente.actualizar(id, modelFuente);
+    public Fuente actualizar(@PathVariable Long id, @RequestBody Fuente fuente) {
+        return  serviceFuente.actualizar(id, fuente);
     }
 
     //DELETE de fuentes
