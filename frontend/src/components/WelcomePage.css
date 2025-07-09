@@ -9,7 +9,7 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100vh;
-  background: linear-gradient(to right, #e0f7fa, #fefcea);
+  background: linear-gradient(to right, #d8fffc, #fef3d0);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   display: flex;
   justify-content: center;
@@ -17,16 +17,17 @@ html, body {
 }
 
 .welcome-container {
-    position: relative; /* Para posicionar el logo */
+  position: relative;
   background: white;
   border-radius: 15px;
   padding: 40px;
-  max-width: 1000px;
-  width: 95%;
+  max-width: 1400px;
+  max-height: 660px;
+  /* width: 95%; */
   text-align: center;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
-  margin: 100px auto; /* Añade margen arriba y abajo */
+  margin: 100px auto;
 }
 
 

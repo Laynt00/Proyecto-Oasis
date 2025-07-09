@@ -1,19 +1,13 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import emailIcon from "../assets/emailIcon.png"
 import passwordIcon from "../assets/passwordIcon.png"
-import closeButton from "../assets/closeButton.png"
-import closeButtonHover from "../assets/closeButtonHover.png"
 
 export default function LoginPage(){
     const navigate = useNavigate();
-    const [isHover, setHover] = useState(false);
 
     return(
         <div className="login-page-div">
-            <button className="close-button" onClick={() => navigate("/home")} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-                <img src={isHover ? closeButtonHover : closeButton} className="close-button-image"/>
-            </button>
+            <button className="back-to-map" onClick={() => navigate("/home")}>Volver al mapa</button>
             <div className="div-register">
                 <p>¡Nos alegramos de volver a verte!</p>
                 <p><u>Ingresa tus datos para iniciar sesión</u>. Si no tienes una cuenta, pulsa el siguiente botón para ir a la página de <b>Registro</b> .</p>

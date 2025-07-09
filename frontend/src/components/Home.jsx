@@ -13,15 +13,9 @@ import L from "leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import PopUpLogin from './PopUpLogin';
-import LoginPage from './LoginPage'
-import RegisterPage from './RegisterPage';
 import SearchBar from "./SearchBar";
 import FilterDropdown from "./FilterDropdown";
 import userIcon from '../assets/userIcon.png';
-import WelcomePage from './WelcomePage';
-
-
-
 
 import proj4 from "proj4";
 
