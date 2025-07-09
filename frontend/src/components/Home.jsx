@@ -1,4 +1,4 @@
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import "../App.css";
 import {
   MapContainer,
@@ -28,10 +28,10 @@ proj4.defs(
   "+proj=utm +zone=30 +ellps=GRS80 +units=m +no_defs"
 );
 
-function Home(){
+function Home() {
   const [fuentes, setFuentes] = useState([]);
   const [geoJsonData, setGeoJsonData] = useState(null);
-  
+
   const fetchData = async () => {
     try {
       const response = await fetch("/apidata/dataFuentes.geojson");
@@ -48,7 +48,7 @@ function Home(){
       const convertedFeatures = geojson.features.map((feature) => {
         const [x, y] = feature.geometry.coordinates;
         const [lon, lat] = proj4("EPSG:25830", "WGS84", [x, y]);
-        
+
         return {
           ...feature,
           geometry: {
@@ -75,21 +75,21 @@ function Home(){
   // Estado para mostrar/ocultar el popup
   const [showLoginPopup, setShowLoginPopup] = useState(false);
 
-    // Configuración de iconos de Leaflet
-    const DefaultIcon = L.icon({
-        iconUrl: icon,
-        shadowUrl: iconShadow,
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41],
-    });
-    L.Marker.prototype.options.icon = DefaultIcon;
+  // Configuración de iconos de Leaflet
+  const DefaultIcon = L.icon({
+    iconUrl: icon,
+    shadowUrl: iconShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  });
+  L.Marker.prototype.options.icon = DefaultIcon;
 
-    // Función para personalizar cada feature del GeoJSON
-    const onEachFeature = (feature, layer) => {
-      if (feature.properties && feature.properties.nombre) {
-        const popupContent = `
+  // Función para personalizar cada feature del GeoJSON
+  const onEachFeature = (feature, layer) => {
+    if (feature.properties && feature.properties.nombre) {
+      const popupContent = `
           <div>
             <b>${feature.properties.nombre}</b>
             <button class="more-info-btn" style="
@@ -103,90 +103,97 @@ function Home(){
             ">+info</button>
           </div>
         `;
-        layer.bindPopup(popupContent);
-      }
-    };
+      layer.bindPopup(popupContent);
+    }
+  };
 
-    // Función para convertir puntos a markers con icono personalizado
-    const pointToLayer = (feature, latlng) => {
+  // Función para convertir puntos a markers con icono personalizado
+  const pointToLayer = (feature, latlng) => {
     return L.marker(latlng, {
-        icon: DefaultIcon
+      icon: DefaultIcon
     });
-    };
+  };
 
-    function LocationMarker() {
-        const [position, setPosition] = useState(null);
-        const map = useMapEvents({
-        click() {
-            map.locate();
-        },
-        locationfound(e) {
-            setPosition(e.latlng);
-            map.flyTo(e.latlng, map.getZoom());
-        },
+  function LocationMarker() {
+    const [position, setPosition] = useState(null);
+    const map = useMapEvents({
+      click() {
+        map.locate();
+      },
+      locationfound(e) {
+        setPosition(e.latlng);
+        map.flyTo(e.latlng, map.getZoom());
+      },
     });
 
     return position === null ? null : (
-        <Marker position={position}>
+      <Marker position={position}>
         <Popup>You are here</Popup>
-        </Marker>
+      </Marker>
     );
-    }
+  }
 
-    const initialPosition = [36.72, -6.42];
+  const initialPosition = [36.72, -6.42];
 
-    const handleFilterChange = (filters) => {
-        console.log("Filtros seleccionados:", filters);
-    };
+  const handleFilterChange = (filters) => {
+    console.log("Filtros seleccionados:", filters);
+  };
 
-    return(
-        <div className="App">
-            <div className="top-bar">
-                <div className="filter-wrapper">
-                <FilterDropdown onFilterChange={handleFilterChange} />
-                </div>
-                <div className="search-wrapper">
-                <SearchBar />
-                </div>
-                <div className="user-wrapper">
-                <img
-                    src={userIcon}
-                    className="user-icon"
-                    alt="Usuario"
-                    onClick={() => setShowLoginPopup(!showLoginPopup)}
-                />
-                </div>
+  return (
+    <div className="App">
+      <div className="top-bar">
+        <div className="filter-wrapper">
+          <FilterDropdown onFilterChange={handleFilterChange} />
+        </div>
+        <div className="search-wrapper">
+          <SearchBar />
+        </div>
+        <div className="user-wrapper">
+          <img
+            src={userIcon}
+            className="user-icon"
+            alt="Usuario"
+            onClick={() => setShowLoginPopup(!showLoginPopup)}
+          />
+        </div>
+      </div>
+
+      {showLoginPopup && (
+        <PopUpLogin onClose={() => setShowLoginPopup(false)} />
+      )}
+
+      <div className="map-container">
+        <MapContainer center={initialPosition} zoom={16} scrollWheelZoom={true} zoomControl={false}>
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          {/* Icono Zoom + / - */}
+          <div className="leaflet-bottom leaflet-left">
+            <div className="leaflet-control leaflet-bar leaflet-control-zoom">
+              <a className="leaflet-control-zoom-in" href="#" title="Zoom in">+</a>
+              <a className="leaflet-control-zoom-out" href="#" title="Zoom out">−</a>
             </div>
-        
-            {showLoginPopup && (
-                <PopUpLogin onClose={() => setShowLoginPopup(false)}/>
-            )}
+          </div>
+          <Marker position={initialPosition}>
+            <Popup>
+              A pretty CSS3 popup. <br /> Easily customizable.
+            </Popup>
+          </Marker>
+          <LocationMarker />
 
-        <div className="map-container">
-            <MapContainer center={initialPosition} zoom={16} scrollWheelZoom={true}>
-            <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          {/* GeoJSON de las fuentes de agua */}
+          {geoJsonData && (
+            <GeoJSON
+              data={geoJsonData}
+              onEachFeature={onEachFeature}
+              pointToLayer={pointToLayer}
             />
-            <Marker position={initialPosition}>
-                <Popup>
-                A pretty CSS3 popup. <br /> Easily customizable.
-                </Popup>
-            </Marker>
-            <LocationMarker />
-            
-            {/* GeoJSON de las fuentes de agua */}
-            {geoJsonData && (
-                <GeoJSON
-                data={geoJsonData}
-                onEachFeature={onEachFeature}
-                pointToLayer={pointToLayer}
-                />
-            )}
-            </MapContainer>
-        </div>
-        </div>
-    )
+          )}
+        </MapContainer>
+      </div>
+    </div>
+  )
 }
 
 export default Home;
