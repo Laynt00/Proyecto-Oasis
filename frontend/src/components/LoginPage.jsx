@@ -11,13 +11,13 @@ export default function LoginPage(){
 
     return(
         <div className="login-page-div">
-            <button className="close-button" onClick={() => navigate("/")} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+            <button className="close-button" onClick={() => navigate("/home")} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
                 <img src={isHover ? closeButtonHover : closeButton} className="close-button-image"/>
             </button>
             <div className="div-register">
                 <p>¡Nos alegramos de volver a verte!</p>
-                <p><u>Ingresa tus datos para iniciar sesión</u>. Si no tienes una cuenta, pulsa el siguiente botón para <b>Registrarte</b> .</p>
-                <button className="button-register">Registrarme</button>
+                <p><u>Ingresa tus datos para iniciar sesión</u>. Si no tienes una cuenta, pulsa el siguiente botón para ir a la página de <b>Registro</b> .</p>
+                <button className="button-register" onClick={() => navigate("/register")}>Registrarme</button>
             </div>
             <div className="div-login-form">
                 <p>Iniciar Sesión</p>

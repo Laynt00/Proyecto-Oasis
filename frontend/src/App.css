@@ -118,7 +118,7 @@
   top:1px;
 }
 
-/* ESTILOS LOGIN PAGE */
+/* ESTILOS LOGIN/REGISTER PAGE */
 .close-button {
   position: fixed;
   top: 0;
@@ -138,7 +138,6 @@
   pointer-events: none;
 }
 
-
 .login-page-div {
   display: flex;
   background-image: url('./assets/loginBackground.png');
@@ -148,7 +147,16 @@
   min-height: 100vh;  
 }
 
-.div-register, .div-login-form{
+.register-page-div{
+  display: flex;
+  background-image: url('./assets/registerBackground.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh; 
+}
+
+.div-register, .div-login-form, .div-login, .div-register-form{
   display: flex;
   flex-direction: column;
   width: 50%;
@@ -158,22 +166,26 @@
   text-align: center;
 }
 
-.div-register p:nth-child(1), .div-login-form p:nth-child(1){
+.div-register p:nth-child(1), .div-login-form p:nth-child(1), .div-login p:nth-child(1), .div-register-form p:nth-child(1){
   font-weight: bold;
   font-size: 50px;
 }
 
-.div-register{
+.div-register, .div-login{
   position: relative;
   color: white;
+  padding-left: 40px;
+  padding-right: 40px;
 }
 
-.div-register p:nth-child(2){
+.div-register p:nth-child(2), .div-login p:nth-child(2){
   font-size: large;
   line-height: 1.5;
+  padding-left: 40px;
+  padding-right: 40px;
 }
 
-.button-register{
+.button-register, .button-login{
   margin-top: 1.5rem;
   padding: 0.7rem 2rem;
   background-color: transparent;
@@ -185,16 +197,16 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.button-register:hover{
+.button-register:hover, .button-login:hover{
   background-color: white;
   color: #deb438  ;
 }
 
-.div-login-form p{
+.div-login-form p, .div-register-form p{
   margin-bottom: 30px;
 }
 
-.form-login {
+.form-login, .form-register{
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -224,7 +236,7 @@
   pointer-events: none;
 }
 
-.button-login-form{
+.button-login-form, .button-register-form{
   margin-top: 1.5rem;
   padding: 0.7rem 2rem;
   background-color: #009990;
@@ -236,6 +248,6 @@
   transition: transform 0.3s ease;
 }
 
-.button-login-form:hover{
+.button-login-form:hover, .button-register-form:hover{
   transform: scale(1.1);
 }
