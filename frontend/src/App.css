@@ -24,7 +24,7 @@
   gap: 10px;
   position: absolute;
   top: 20px;
-  left: 60px;
+  left: 20px;
   right: 20px;
   z-index: 1000;
 }
@@ -98,8 +98,8 @@
 
 .popup-button{
   margin-top: 10px;
-  box-shadow: 0px 10px 14px -7px #276873; 
   background-color:#009990;
+  border: 1px solid #009990;
   border-radius:8px;
   cursor:pointer;
   color:white;
