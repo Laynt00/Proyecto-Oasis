@@ -16,7 +16,8 @@ import PopUpLogin from './PopUpLogin';
 import SearchBar from "./SearchBar";
 import FilterDropdown from "./FilterDropdown";
 import userIcon from '../assets/userIcon.png';
-import WelcomePage from './WelcomePage';
+import './SourceInfoPanel.css';
+// import fuentecillaImg from '../assets/fuentecilla.png';
 
 import proj4 from "proj4";
 
@@ -29,6 +30,7 @@ proj4.defs(
 function Home() {
   const [fuentes, setFuentes] = useState([]);
   const [geoJsonData, setGeoJsonData] = useState(null);
+  const [selectedSource, setSelectedSource] = useState(null);
 
   const fetchData = async () => {
     try {
@@ -87,21 +89,25 @@ function Home() {
   // Función para personalizar cada feature del GeoJSON
   const onEachFeature = (feature, layer) => {
     if (feature.properties && feature.properties.nombre) {
-      const popupContent = `
-          <div>
-            <b>${feature.properties.nombre}</b>
-            <button class="more-info-btn" style="
-              margin-top: 8px;
-              padding: 4px 8px;
-              background-color: #4CAF50;
-              color: white;
-              border: none;
-              border-radius: 4px;
-              cursor: pointer;
-            ">+info</button>
-          </div>
-        `;
-      layer.bindPopup(popupContent);
+      const popupDiv = document.createElement("div");
+      popupDiv.innerHTML = `
+        <strong>${feature.properties.nombre}</strong><br/>
+        <button class="more-info-btn" style="
+          margin-top: 8px;
+          padding: 4px 8px;
+          background-color: #4CAF50;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        ">+info</button>
+      `;
+      popupDiv.querySelector(".more-info-btn").addEventListener("click", () => {
+        console.log("Más información sobre:", feature.properties);
+        setSelectedSource(feature);
+      });
+
+      layer.bindPopup(popupDiv);
     }
   };
 
@@ -189,9 +195,47 @@ function Home() {
             />
           )}
         </MapContainer>
+
+        {selectedSource && <div className="overlay"></div>}
+
+          {selectedSource && (
+            <div className="source-panel">
+              {/* ... contenido del panel ... */}
+            </div>
+          )}
+
+        {/* PANEL DERECHO DE INFORMACIÓN */}
+        {selectedSource && (
+        <div className="source-panel">
+          <button className="close-btn" onClick={() => setSelectedSource(null)}>✕</button>
+
+          <div className="panel-header">
+            <div className="panel-text">
+              <h2>{selectedSource.properties.nombre}</h2>
+              <p><strong>Calle:</strong> {selectedSource.properties.calle || "Nombredecalle"}</p>
+              <p><strong>Estado:</strong> <span className="estado-ok">OK</span></p>
+              <p><small>Última actualización de estado</small></p>
+              <p><strong>10/10/2025</strong></p>
+            </div>
+            {/* <img src={fuentecillaImg} alt="Fuente" className="panel-img" /> */}
+
+
+          </div>
+
+          <div className="comentarios">
+            <h3>Comentarios</h3>
+            <input type="text" placeholder="Deja tu comentario..." />
+            <div className="comentario">
+              <span><strong>Usuario A</strong> • Hace un tiempo</span>
+              <p>Buen sitio para recargar agua</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       </div>
     </div>
-  )
+  );
 }
 
 export default Home;
