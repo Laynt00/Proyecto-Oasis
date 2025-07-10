@@ -18,25 +18,25 @@ public class Controller_Fuente {
     }
 
     //GET de fuentes
-    @GetMapping("fuente")
+    @GetMapping("/fuente")
     public List<Fuente> verTodas() {
         return serviceFuente.findAll();
     }
 
     //POST de fuentes
-    @PostMapping("fuente")
+    @PostMapping("/fuente")
     public Fuente crear (@RequestBody Fuente fuente) {
         return serviceFuente.crear(fuente);
     }
 
     //PUT de fuentes
-    @PutMapping("fuente/{id}")
+    @PutMapping("/fuente/{id}")
     public Fuente actualizar(@PathVariable Long id, @RequestBody Fuente fuente) {
         return  serviceFuente.actualizar(id, fuente);
     }
 
     //DELETE de fuentes
-    @DeleteMapping("fuente/{ID}")
+    @DeleteMapping("/fuente/{ID}")
     public void eliminar(@PathVariable Long id) {
         serviceFuente.deleteById(id);
     }
