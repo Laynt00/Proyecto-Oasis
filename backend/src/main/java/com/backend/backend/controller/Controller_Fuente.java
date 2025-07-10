@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/Fuente")
+@RequestMapping("/api")
 public class Controller_Fuente {
     private final Service_Fuente serviceFuente;
 
@@ -18,25 +18,25 @@ public class Controller_Fuente {
     }
 
     //GET de fuentes
-    @GetMapping
+    @GetMapping("fuente")
     public List<Fuente> verTodas() {
         return serviceFuente.findAll();
     }
 
     //POST de fuentes
-    @PostMapping
+    @PostMapping("fuente")
     public Fuente crear (@RequestBody Fuente fuente) {
         return serviceFuente.crear(fuente);
     }
 
     //PUT de fuentes
-    @PutMapping("/{ID}")
+    @PutMapping("fuente/{id}")
     public Fuente actualizar(@PathVariable Long id, @RequestBody Fuente fuente) {
         return  serviceFuente.actualizar(id, fuente);
     }
 
     //DELETE de fuentes
-    @DeleteMapping("/{ID}")
+    @DeleteMapping("fuente/{ID}")
     public void eliminar(@PathVariable Long id) {
         serviceFuente.deleteById(id);
     }
