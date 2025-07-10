@@ -70,9 +70,6 @@ function Home() {
     fetchData();
   }, []);
 
-  // Estado para mostrar/ocultar el popup
-  const [showLoginPopup, setShowLoginPopup] = useState(false);
-
   // Configuración de iconos de Leaflet
   const DefaultIcon = L.icon({
     iconUrl: icon,
