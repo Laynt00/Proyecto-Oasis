@@ -8,7 +8,7 @@ import perroImg from "../assets/perro.png";
 export default function WelcomePage() {
   const navigate = useNavigate();
 
-  return (
+  return(
     <div className="welcome-container">
       <h1>Bienvenido a <div className="web-title">Oasis</div></h1>
       <h2><b>Conoce tu ciudad. Encuentra aquello que está escondido.</b></h2>
