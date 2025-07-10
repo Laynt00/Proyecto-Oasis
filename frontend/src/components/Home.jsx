@@ -158,7 +158,7 @@ function Home() {
       )}
 
       <div className="map-container">
-        <MapContainer center={initialPosition} zoom={16} scrollWheelZoom={true}>
+        <MapContainer center={initialPosition} zoom={16} scrollWheelZoom={true} zoomControl={false}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
