@@ -12,37 +12,37 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
+
 import PopUpLogin from './PopUpLogin';
 import SearchBar from "./SearchBar";
 import FilterDropdown from "./FilterDropdown";
 import userIcon from '../assets/userIcon.png';
 import WelcomePage from './WelcomePage';
+import './SourceInfoPanel.css';
+import fuentecillaImg from '../assets/fuentecilla.png';
+
 
 import proj4 from "proj4";
 
-// Configuración de proj4 para conversión de coordenadas UTM a WGS84
-proj4.defs(
-  "EPSG:25830",
-  "+proj=utm +zone=30 +ellps=GRS80 +units=m +no_defs"
-);
+proj4.defs("EPSG:25830", "+proj=utm +zone=30 +ellps=GRS80 +units=m +no_defs");
 
 function Home() {
   const [fuentes, setFuentes] = useState([]);
   const [geoJsonData, setGeoJsonData] = useState(null);
+  const [selectedSource, setSelectedSource] = useState(null);
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
 
   const fetchData = async () => {
     try {
       const response = await fetch("/apidata/dataFuentes.geojson");
       const geojson = await response.json();
 
-      // Procesamiento para el estado fuentes
       const datosProcesados = geojson.features.map(feature => ({
         nombre: feature.properties.nombre,
         coordenadas: feature.geometry.coordinates
       }));
       setFuentes(datosProcesados);
 
-      // Procesamiento para GeoJSON con conversión de coordenadas
       const convertedFeatures = geojson.features.map((feature) => {
         const [x, y] = feature.geometry.coordinates;
         const [lon, lat] = proj4("EPSG:25830", "WGS84", [x, y]);
@@ -161,7 +161,7 @@ function Home() {
       )}
 
       <div className="map-container">
-        <MapContainer center={initialPosition} zoom={16} scrollWheelZoom={true} zoomControl={false}>
+        <MapContainer center={initialPosition} zoom={16} scrollWheelZoom={true}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -174,13 +174,9 @@ function Home() {
             </div>
           </div>
           <Marker position={initialPosition}>
-            <Popup>
-              A pretty CSS3 popup. <br /> Easily customizable.
-            </Popup>
+            <Popup>Estás aquí</Popup>
           </Marker>
           <LocationMarker />
-
-          {/* GeoJSON de las fuentes de agua */}
           {geoJsonData && (
             <GeoJSON
               data={geoJsonData}
@@ -189,9 +185,47 @@ function Home() {
             />
           )}
         </MapContainer>
+
+          {selectedSource && <div className="overlay"></div>}
+
+          {selectedSource && (
+            <div className="source-panel">
+              {/* ... contenido del panel ... */}
+            </div>
+          )}
+
+        {/* PANEL DERECHO DE INFORMACIÓN */}
+        {selectedSource && (
+        <div className="source-panel">
+          <button className="close-btn" onClick={() => setSelectedSource(null)}>✕</button>
+
+          <div className="panel-header">
+            <div className="panel-text">
+              <h2>{selectedSource.properties.nombre}</h2>
+              <p><strong>Calle:</strong> {selectedSource.properties.calle || "Nombredecalle"}</p>
+              <p><strong>Estado:</strong> <span className="estado-ok">OK</span></p>
+              <p><small>Última actualización de estado</small></p>
+              <p><strong>10/10/2025</strong></p>
+            </div>
+            <img src={fuentecillaImg} alt="Fuente" className="panel-img" />
+
+
+          </div>
+
+          <div className="comentarios">
+            <h3>Comentarios</h3>
+            <input type="text" placeholder="Deja tu comentario..." />
+            <div className="comentario">
+              <span><strong>Usuario A</strong> • Hace un tiempo</span>
+              <p>Buen sitio para recargar agua</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       </div>
     </div>
-  )
+  );
 }
 
 export default Home;
