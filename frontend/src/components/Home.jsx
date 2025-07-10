@@ -71,6 +71,7 @@ function Home() {
     fetchData();
   }, []);
 
+  // Configuración de iconos de Leaflet
   const DefaultIcon = L.icon({
     iconUrl: icon,
     shadowUrl: iconShadow,
@@ -160,11 +161,18 @@ function Home() {
       )}
 
       <div className="map-container">
-        <MapContainer center={initialPosition} zoom={16} scrollWheelZoom={true}>
+        <MapContainer center={initialPosition} zoom={16} scrollWheelZoom={true} zoomControl={false}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
+          {/* Icono Zoom + / - */}
+          <div className="leaflet-bottom leaflet-left">
+            <div className="leaflet-control leaflet-bar leaflet-control-zoom">
+              <a className="leaflet-control-zoom-in" href="#" title="Zoom in">+</a>
+              <a className="leaflet-control-zoom-out" href="#" title="Zoom out">−</a>
+            </div>
+          </div>
           <Marker position={initialPosition}>
             <Popup>Estás aquí</Popup>
           </Marker>

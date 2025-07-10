@@ -39,6 +39,7 @@ export default function WelcomePage() {
             onClick={() => navigate("/home")}
             style={{ cursor: "pointer" }}
           />
+          {/* <p>O, si lo prefieres, puedes </p> */}
           <div className="welcome-buttons">
             <button className="primary" onClick={() => navigate("/login")}>Iniciar sesión</button>
             <button className="secondary" onClick={() => navigate("/register")}>Únete a Oasis</button>
