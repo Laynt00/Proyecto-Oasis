@@ -9,7 +9,7 @@ import perroImg from "../assets/perro.png";
 export default function WelcomePage() {
   const navigate = useNavigate();
 
-  return (
+  return(
     <div className="welcome-container">
       {/* Logo con redirección al mapa */}
       <img
