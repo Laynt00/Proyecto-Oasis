@@ -84,21 +84,25 @@ function Home() {
   // Función para personalizar cada feature del GeoJSON
   const onEachFeature = (feature, layer) => {
     if (feature.properties && feature.properties.nombre) {
-      const popupContent = `
-          <div>
-            <b>${feature.properties.nombre}</b>
-            <button class="more-info-btn" style="
-              margin-top: 8px;
-              padding: 4px 8px;
-              background-color: #4CAF50;
-              color: white;
-              border: none;
-              border-radius: 4px;
-              cursor: pointer;
-            ">+info</button>
-          </div>
-        `;
-      layer.bindPopup(popupContent);
+      const popupDiv = document.createElement("div");
+      popupDiv.innerHTML = `
+        <strong>${feature.properties.nombre}</strong><br/>
+        <button class="more-info-btn" style="
+          margin-top: 8px;
+          padding: 4px 8px;
+          background-color: #4CAF50;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        ">+info</button>
+      `;
+      popupDiv.querySelector(".more-info-btn").addEventListener("click", () => {
+        console.log("Más información sobre:", feature.properties);
+        setSelectedSource(feature);
+      });
+
+      layer.bindPopup(popupDiv);
     }
   };
 
