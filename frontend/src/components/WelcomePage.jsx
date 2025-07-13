@@ -10,7 +10,7 @@ export default function WelcomePage() {
 
   return(
     <div className="welcome-container">
-      <h1>Bienvenido a <div className="web-title">Oasis</div></h1>
+      <h1>Bienvenido a Oasis</h1>
       <h2><b>Conoce tu ciudad. Encuentra aquello que está escondido.</b></h2>
       <div className="content-row">
         <div className="gallery-div">

@@ -31,16 +31,6 @@
   align-items: center;
 }
 
-.web-title{
-  display: inline-block;
-  font-family: 'Pacifico', cursive;
-  background: linear-gradient(to right, #deb438, #009990);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  display: inline-block;
-  font-size: 45px;
-}
-
 /* Logo React */
 .logo {
   width: 150px;
@@ -94,7 +84,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 160px; /* Establecemos un ancho fijo */
+  width: 160px;
   text-align: center;
   gap: 10px;
 }

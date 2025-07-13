@@ -1,0 +1,21 @@
+.web-header{
+    background-color: #00524c;
+    height: 80px;
+    width: 100vw;
+    text-align: center;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1500;
+}
+
+.web-title{
+  display: inline-block;
+  font-family: 'Pacifico', cursive;
+  background: linear-gradient(to right, #deb438, #009990);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  font-size: 45px;
+}
