@@ -28,7 +28,7 @@ export default function RegisterPage(){
                         <img src={passwordIcon} className="form-icon" />
                         <input type="password" placeholder="Repetir contraseña" />
                     </div>
-                    <button className="button-register-form">Registrarse</button>
+                    <button className="button-register-form" onClick={() => navigate("/login")}>Registrarse</button>
                 </form>
             </div>
             <div className="div-login">
