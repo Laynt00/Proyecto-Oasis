@@ -15,12 +15,18 @@ public class Lugar {
     private double x;
     private double y;
 
+    @OneToMany
+    @JoinColumn (name="id_comentario")
+    private Comentario comentario;
+
+
     public Lugar(){}
 
-    public Lugar(String nombre, double x, double y){
+    public Lugar(String nombre, double x, double y, Comentario comentario){
         this.nombre = nombre;
         this.x = x;
         this.y = y;
+        this.comentario = comentario;
     }
 
     //GETTERS y SETTERS
@@ -36,5 +42,9 @@ public class Lugar {
 
     public double getY() { return y; }
     public void setY(double y) { this.y = y; }
+
+    public Comentario getComentario() { return comentario; }
+
+    public void setComentario(Comentario comentario) { this.comentario = comentario; }
 
 }

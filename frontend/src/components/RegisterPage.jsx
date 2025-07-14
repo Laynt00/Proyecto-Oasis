@@ -3,8 +3,27 @@ import nameIcon from "../assets/nameIcon.png"
 import emailIcon from "../assets/emailIcon.png"
 import passwordIcon from "../assets/passwordIcon.png"
 
+import {useState} from "react";
+import {app} from "../../assets/firebase";
+import {signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword} from "firebase/auth";
+
+
 export default function RegisterPage(){
     const navigate = useNavigate();
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loginError, setLoginError] = useState('');
+
+    const auth = getAuth(app);
+    const HandleSignUp = async(e)=>{
+        try{
+            await createUserWithEmailAndPassword(auth, email, password);
+            console.log("Usuario creado exitosamente.");    
+        }catch(error){
+            console.log(error);
+        }
+    }
 
     return(
         <div className="register-page-div">
@@ -18,17 +37,22 @@ export default function RegisterPage(){
                     </div>
                     <div className="input-wrapper">
                         <img src={emailIcon} className="form-icon" />
-                        <input type="email" placeholder="Correo electrónico" />
+                        <input type="email"
+                        value={email}
+                        onChange={(e)=>setEmail(e.target.value)}
+                        placeholder="Correo electrónico" />
                     </div>
                     <div className="input-wrapper">
                         <img src={passwordIcon} className="form-icon" />
-                        <input type="password" placeholder="Contraseña" />
+                        <input type="password"
+                        value={password}
+                        onChange={(e)=>setPassword} placeholder="Contraseña" />
                     </div>
                     <div className="input-wrapper">
                         <img src={passwordIcon} className="form-icon" />
                         <input type="password" placeholder="Repetir contraseña" />
                     </div>
-                    <button className="button-register-form">Registrarse</button>
+                    <button className="button-register-form" onClick={()=>HandleSignUp}>Registrarse</button>
                 </form>
             </div>
             <div className="div-login">
