@@ -1,21 +1,100 @@
 .web-header{
-    background-color: #00524c;
-    height: 80px;
-    width: 100vw;
-    text-align: center;
-    position: fixed;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1500;
+  background-color: #00524c;
+  height: 80px;
+  width: 100vw;
+  text-align: center;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1500;
+  box-shadow: 0px 0px 20px 3px black;
 }
 
 .web-title{
+  cursor: pointer;
   display: inline-block;
   font-family: 'Pacifico', cursive;
   background: linear-gradient(to right, #deb438, #009990);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
-  font-size: 45px;
+  font-size: 65px;
+  transition: transform 0.3s ease;
+}
+
+.web-title:hover{
+  transform: scale(1.1);
+}
+
+.user-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  position: absolute;
+  right: 20px;
+}
+
+.user-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
+  background-color: white;
+  padding: 5px;
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.user-icon:hover {
+  transform: scale(1.1);
+  border-color: #888;
+}
+
+.popup-login {
+  position: absolute;
+  top: 95px;
+  right: 15px;
+  width: 250px;
+  height: 350px;
+  background-color: white;
+  box-shadow: 0px 0px 20px black;
+  border: 2px solid rgb(179, 179, 179);
+  border-radius: 25px;
+  padding: 1em;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: space-around;
+}
+
+.userIcon {
+  width: 100px;
+}
+
+.user-appearance{
+  margin-bottom: 15px;
+}
+
+.popup-button{
+  margin-top: 10px;
+  background-color:#009990;
+  border: 1px solid #009990;
+  border-radius:25px;
+  cursor:pointer;
+  color:white;
+  font-weight:bold;
+  padding:10px 20px;
+  text-decoration:none;
+}
+
+.popup-button:hover {
+  background:linear-gradient(to bottom, #009990 5%, #1ecbbf 100%);
+  background-color:#009990;
+}
+.popup-button:active {
+  position:relative;
+  top:1px;
 }
