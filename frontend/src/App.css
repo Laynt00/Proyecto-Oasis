@@ -30,7 +30,7 @@
   top: 20px;
   left: 20px;
   right: 20px;
-  z-index: 1000;
+   z-index: 500;
 }
 
 .filter-wrapper {
@@ -229,4 +229,9 @@
   padding: 0.5rem;
   border-radius: 5px;
   margin-top: 0.5rem;
+}
+
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 500 !important; /* 🔽 por debajo del overlay (998) y panel (9999) */
 }

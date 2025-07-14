@@ -8,12 +8,24 @@
   padding: 20px;
   box-shadow: -4px 0 15px rgba(0, 0, 0, 0.4);
   overflow-y: auto;
-  z-index: 9999; /* más alto que cualquier otro elemento */
+  z-index: 9999;
   box-sizing: border-box;
   font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  animation: slideInRight 0.4s ease forwards;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0%);
+    opacity: 1;
+  }
 }
 
 .overlay {
@@ -55,6 +67,9 @@
 /* Texto a la izquierda */
 .panel-text {
   flex: 1;
+  margin: 8px 0;         /* Más separación entre párrafos */
+  font-size: 15px;
+  line-height: 1.8;      /* 🔼 Espaciado vertical más cómodo */
 }
 
 .panel-text h2 {
@@ -63,6 +78,7 @@
   line-height: 1.5;
   letter-spacing: 0.5px;
   margin: 0 0 24px; /* aumenta la separación debajo del título */
+  margin-bottom: 20px;
 }
 
 
@@ -81,6 +97,9 @@
   margin-top: 15px;
   display: flex;
   flex-direction: column;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+}
 }
 
 .comentarios h3 {

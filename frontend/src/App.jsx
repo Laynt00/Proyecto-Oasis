@@ -3,7 +3,7 @@ import Header from './components/Header';
 import Home from './components/Home';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
-import WelcomePage from './components/WelcomePage';
+import Map from './components/Map';
 import { useLocation } from 'react-router-dom';
 
 
@@ -15,12 +15,13 @@ function App() {
     <>
       {!hideHeader && <Header />}
       <Routes>
-        <Route path="/" element={<WelcomePage />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/map" element={<Map />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
       </Routes>
     </>
+    
   );
 }
 
