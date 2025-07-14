@@ -20,6 +20,7 @@ import SearchBar from "./SearchBar";
 import FilterDropdown from "./FilterDropdown";
 import userIcon from '../assets/userIcon.png';
 import WelcomePage from './WelcomePage';
+import ShowComments from './ShowComments';
 import './SourceInfoPanel.css';
 import fuentecillaImg from '../assets/fuentecilla.png';
 
@@ -34,41 +35,50 @@ function Home() {
   const [selectedSource, setSelectedSource] = useState(null);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch("/apidata/dataFuentes.geojson");
-      const geojson = await response.json();
+  const fetchFontData = async () => {
+  try {
+    const response = await fetch("http://localhost:8080/api/fuente");
+    const data = await response.json(); // No es un GeoJSON estándar
+    console.log("Data fetched successfully:", data);
 
-      const datosProcesados = geojson.features.map(feature => ({
-        nombre: feature.properties.nombre,
-        coordenadas: feature.geometry.coordinates
-      }));
-      setFuentes(datosProcesados);
+    // Procesamiento para setFuentes (si necesitas los datos originales)
+    setFuentes(data);
 
-      const convertedFeatures = geojson.features.map((feature) => {
-        const [x, y] = feature.geometry.coordinates;
-        const [lon, lat] = proj4("EPSG:25830", "WGS84", [x, y]);
-        return {
-          ...feature,
-          geometry: {
-            ...feature.geometry,
-            coordinates: [lon, lat]
-          }
-        };
-      });
+    // Convertir datos al formato esperado por tu componente
+    const datosProcesados = data.map(item => ({
+      nombre: item.nombre,
+      coordenadas: [item.x, item.y]
+    }));
 
-      setGeoJsonData({
-        ...geojson,
-        features: convertedFeatures
-      });
+    // Transformación de coordenadas EPSG:25830 a WGS84 (lon, lat)
+    const convertedFeatures = data.map((item) => {
+      const [lon, lat] = proj4("EPSG:25830", "WGS84", [item.x, item.y]);
+      return {
+        type: "Feature", // Necesario para GeoJSON
+        properties: {
+          nombre: item.nombre,
+          id: item.id
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [lon, lat]
+        }
+      };
+    });
 
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
+    // Crear un GeoJSON válido con las features convertidas
+    setGeoJsonData({
+      type: "FeatureCollection",
+      features: convertedFeatures
+    });
+
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
 
   useEffect(() => {
-    fetchData();
+    fetchFontData();
   }, []);
 
   // Configuración de iconos de Leaflet
@@ -99,6 +109,7 @@ function Home() {
       `;
       popupDiv.querySelector(".more-info-btn").addEventListener("click", () => {
         console.log("Más información sobre:", feature.properties);
+        // Hacer una llamada a la API para obtener los comentarios específicos de esta fuente
         setSelectedSource(feature);
       });
 
@@ -186,14 +197,6 @@ function Home() {
           )}
         </MapContainer>
 
-          {selectedSource && <div className="overlay"></div>}
-
-          {selectedSource && (
-            <div className="source-panel">
-              {/* ... contenido del panel ... */}
-            </div>
-          )}
-
         {/* PANEL DERECHO DE INFORMACIÓN */}
         {selectedSource && (
         <div className="source-panel">
@@ -213,12 +216,9 @@ function Home() {
           </div>
 
           <div className="comentarios">
-            <h3>Comentarios</h3>
-            <input type="text" placeholder="Deja tu comentario..." />
-            <div className="comentario">
-              <span><strong>Usuario A</strong> • Hace un tiempo</span>
-              <p>Buen sitio para recargar agua</p>
-            </div>
+            
+              {/* La logica de mostrar comentarios va aqui */}
+              <ShowComments></ShowComments>
           </div>
         </div>
       )}
