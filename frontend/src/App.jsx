@@ -15,7 +15,7 @@ function App() {
     <>
       {!hideHeader && <Header />}
       <Routes>
-        <Route path="/home" element={<Home />} />
+        <Route path="/" element={<Home />} />
         <Route path="/map" element={<Map />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

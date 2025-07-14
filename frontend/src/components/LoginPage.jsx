@@ -7,7 +7,7 @@ export default function LoginPage(){
 
     return(
         <div className="login-page-div">
-            <button className="back-to-map" onClick={() => navigate("/home")}>Volver al mapa</button>
+            <button className="back-to-map" onClick={() => navigate("/map")}>Volver al mapa</button>
             <div className="div-register">
                 <p>¡Nos alegramos de volver a verte!</p>
                 <p><u>Ingresa tus datos para iniciar sesión</u>. Si no tienes una cuenta, pulsa el siguiente botón para ir a la página de <b>Registro</b> .</p>

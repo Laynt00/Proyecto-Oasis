@@ -10,9 +10,7 @@ export default function Home() {
 
   return (
     <div className="welcome-container">
-      <h1>
-        Bienvenido a <div className="web-title">Oasis</div>
-      </h1>
+      <h1>Bienvenido a Oasis</h1>
       <h2>
         <b>Conoce tu ciudad. Encuentra aquello que está escondido.</b>
       </h2>
@@ -51,15 +49,6 @@ export default function Home() {
             onClick={() => navigate("/map")}
             style={{ cursor: "pointer" }}
           />
-
-          <div className="welcome-buttons">
-            <button className="primary" onClick={() => navigate("/login")}>
-              Iniciar sesión
-            </button>
-            <button className="secondary" onClick={() => navigate("/register")}>
-              Únete a Oasis
-            </button>
-          </div>
         </div>
       </div>
     </div>

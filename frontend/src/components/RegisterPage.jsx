@@ -8,7 +8,7 @@ export default function RegisterPage(){
 
     return(
         <div className="register-page-div">
-            <button className="back-to-map" onClick={() => navigate("/home")}>Volver al mapa</button>
+            <button className="back-to-map" onClick={() => navigate("/map")}>Volver al mapa</button>
             <div className="div-register-form">
                 <p>Registrarse</p>
                 <form className="form-register">
