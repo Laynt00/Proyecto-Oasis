@@ -10,7 +10,6 @@ public class Comentario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String texto;
 
     public Comentario(){}

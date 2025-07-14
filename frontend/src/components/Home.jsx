@@ -214,12 +214,7 @@ function Home() {
 
 
           </div>
-
-          <div className="comentarios">
-            
-              {/* La logica de mostrar comentarios va aqui */}
               <ShowComments></ShowComments>
-          </div>
         </div>
       )}
 

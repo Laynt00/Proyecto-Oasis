@@ -29,17 +29,37 @@ export default function ShowComments() {
         }
     };
 
+    const handleCommentSubmit = async () => {
+        if (!user) {
+            alert("Es necesario estar logueado para comentar");
+            return;
+        }
+
+        try {
+            const response = await axios.post(url, {
+                user,
+                comment
+            });
+            console.log("Comment submitted successfully:", response.data);
+            setComments([...comments, response.data]);
+            setUser("");
+            setComment("");
+        } catch (error) {
+            console.error("Error submitting comment:", error);
+        }
+    };
+
     return (
-        <>
+        <div className="comentarios">
             <h3>Comentarios</h3>
             <input type="text" placeholder="Deja tu comentario..." />
-            <button className="submit-comment-btn">Enviar</button>
+            <button className="submit-comment-btn" onClick={handleCommentSubmit}>Comentar</button>
             <div className="comentario"></div>
             <span><strong>Usuario A</strong> • Hace un tiempo</span>
             <p>Buen sitio para recargar agua</p>
             <button className="edit-comment-btn">Boton de Editar</button>
             <button className="delete-comment-btn">Boton de Eliminar</button>
 
-        </>
+        </div>
     )
 }
