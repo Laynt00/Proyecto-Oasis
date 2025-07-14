@@ -3,6 +3,9 @@ package com.backend.backend.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipo_lugar", discriminatorType = DiscriminatorType.STRING)
@@ -17,16 +20,15 @@ public class Lugar {
 
     @OneToMany
     @JoinColumn (name="id_comentario")
-    private Comentario comentario;
+    private List<Comentario> comentarios = new ArrayList<>();
 
 
     public Lugar(){}
 
-    public Lugar(String nombre, double x, double y, Comentario comentario){
+    public Lugar(String nombre, double x, double y){
         this.nombre = nombre;
         this.x = x;
         this.y = y;
-        this.comentario = comentario;
     }
 
     //GETTERS y SETTERS
@@ -43,8 +45,11 @@ public class Lugar {
     public double getY() { return y; }
     public void setY(double y) { this.y = y; }
 
-    public Comentario getComentario() { return comentario; }
+    public List<Comentario> getComentarios() {
+        return comentarios;
+    }
 
-    public void setComentario(Comentario comentario) { this.comentario = comentario; }
-
+    public void setComentarios(List<Comentario> comentarios) {
+        this.comentarios = comentarios;
+    }
 }
