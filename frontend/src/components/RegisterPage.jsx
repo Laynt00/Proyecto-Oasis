@@ -4,8 +4,9 @@ import emailIcon from "../assets/emailIcon.png"
 import passwordIcon from "../assets/passwordIcon.png"
 
 import {useState} from "react";
-import {app} from "../../assets/firebase";
+import {app} from "../assets/firebase";
 import {signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword} from "firebase/auth";
+import { getAuth } from "firebase/auth";
 
 
 export default function RegisterPage(){

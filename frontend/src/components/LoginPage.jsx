@@ -5,10 +5,6 @@ import passwordIcon from "../assets/passwordIcon.png"
 export default function LoginPage(){
     const navigate = useNavigate();
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [loginError, setLoginError] = useState('');
-
     return(
         <div className="login-page-div">
             <button className="back-to-map" onClick={()=>navigate("/home")}>Volver al mapa</button>
