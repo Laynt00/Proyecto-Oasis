@@ -158,13 +158,13 @@ function Home() {
       </div>
       <div className="logo-div">
         <p>Pincha aquí para acceder al mapa</p>
-        <img
+        {/* <img
           src={logoReact}
           alt="Logo"
           className="logo"
           onClick={() => navigate("/map")}
           style={{ cursor: "pointer" }}
-        />
+        /> */}
       </div>
 
       {showLoginPopup && (
