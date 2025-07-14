@@ -1,3 +1,14 @@
+/* ESTILOS HOME PAGE */
+.home-page-content{
+  display: flex;
+  /* background-image: url('./assets/homeBackground.png'); */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
 /* ESTILOS PAGINA PRINCIPAL */
 .leaflet-container {
   height: 100vh;
