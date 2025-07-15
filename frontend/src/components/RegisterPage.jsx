@@ -18,6 +18,7 @@ export default function RegisterPage(){
 
     const auth = getAuth(app);
     const HandleSignUp = async(e)=>{
+        e.preventDefault();
         try{
             await createUserWithEmailAndPassword(auth, email, password);
             console.log("Usuario creado exitosamente.");    
@@ -53,7 +54,7 @@ export default function RegisterPage(){
                         <img src={passwordIcon} className="form-icon" />
                         <input type="password" placeholder="Repetir contraseña" />
                     </div>
-                    <button className="button-register-form" onClick={()=>HandleSignUp}>Registrarse</button>
+                    <button className="button-register-form" onClick={HandleSignUp}>Registrarse</button>
                 </form>
             </div>
             <div className="div-login">
