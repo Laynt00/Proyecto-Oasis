@@ -9,8 +9,29 @@ import {signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, createU
 import { getAuth } from "firebase/auth";
 
 
+import {useState} from "react";
+import {app} from "../assets/firebase";
+import {signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword} from "firebase/auth";
+import { getAuth } from "firebase/auth";
+
+
 export default function RegisterPage(){
     const navigate = useNavigate();
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loginError, setLoginError] = useState('');
+
+    const auth = getAuth(app);
+    const HandleSignUp = async(e)=>{
+        e.preventDefault();
+        try{
+            await createUserWithEmailAndPassword(auth, email, password);
+            console.log("Usuario creado exitosamente.");    
+        }catch(error){
+            console.log(error);
+        }
+    }
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -39,10 +60,16 @@ export default function RegisterPage(){
                     </div>
                     <div className="input-wrapper">
                         <img src={emailIcon} className="form-icon" />
-                        <input type="email" placeholder="Correo electrónico" />
+                        <input type="email"
+                        value={email}
+                        onChange={(e)=>setEmail(e.target.value)}
+                        placeholder="Correo electrónico" />
                     </div>
                     <div className="input-wrapper">
                         <img src={passwordIcon} className="form-icon" />
+                        <input type="password"
+                        value={password}
+                        onChange={(e)=>setPassword(e.target.value)} placeholder="Contraseña" />
                         <input type="password"
                         value={password}
                         onChange={(e)=>setPassword(e.target.value)} placeholder="Contraseña" />

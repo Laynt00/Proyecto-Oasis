@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipo_lugar", discriminatorType = DiscriminatorType.STRING)
@@ -17,6 +20,11 @@ public class Lugar {
     private String nombre;
     private double x;
     private double y;
+
+    @OneToMany
+    @JoinColumn (name="id_comentario")
+    private List<Comentario> comentarios = new ArrayList<>();
+
 
     @OneToMany
     @JoinColumn (name="id_comentario")

@@ -1,9 +1,6 @@
 package com.backend.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,4 +14,18 @@ public class Comentario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String texto;
+
+    @ManyToOne
+    @JoinColumn(lugar = "id_lugar")
+    @JoinColumn(usuario = "id_usuario")
+    private Lugar lugar;
+    private User usuario;
+
+    public Comentario(){}
+    public Comentario(String texto, Lugar lugar, User usuario) {
+        this.texto = texto;
+        this.lugar = lugar;
+        this.usuario = usuario;
+    }
+
 }
