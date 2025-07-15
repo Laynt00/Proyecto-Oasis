@@ -28,7 +28,9 @@ export default function RegisterPage(){
                     </div>
                     <div className="input-wrapper">
                         <img src={passwordIcon} className="form-icon" />
-                        <input type="password" placeholder="Contraseña" />
+                        <input type="password"
+                        value={password}
+                        onChange={(e)=>setPassword(e.target.value)} placeholder="Contraseña" />
                     </div>
                     <div className="input-wrapper">
                         <img src={passwordIcon} className="form-icon" />
