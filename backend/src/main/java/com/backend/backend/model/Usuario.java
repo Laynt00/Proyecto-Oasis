@@ -20,7 +20,14 @@ public class Usuario {
         this.isadmin = isadmin;
     }
 
+    @OneToMany
+    @JoinColumn (name = "id_comentario")
+    private Comentario comentario;
+
     //GETTERS y SETTERS
+
+    public Long getId(){ return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
@@ -31,11 +38,9 @@ public class Usuario {
     public boolean getIsadmin() { return isadmin; }
     public void setIsadmin(boolean isadmin) { this.isadmin = isadmin; }
 
-    public Long getId(){
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public Comentario getComentario() { return comentario; }
+
+    public void setComentario(Comentario comentario) { this.comentario = comentario; }
+
 }
