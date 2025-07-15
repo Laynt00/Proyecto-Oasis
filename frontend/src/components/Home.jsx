@@ -1,17 +1,81 @@
-import { useNavigate } from "react-router-dom";
 import "./Home.css";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import fuente1 from "../assets/carrusel-fuente1.jpg";
+import fuente2 from "../assets/carrusel-fuente2.jpg";
+import banco1 from "../assets/carrusel-banco1.jpg";
+import banco2 from "../assets/carrusel-banco2.jpg";
+import parquecanino1 from "../assets/carrusel-parquecanino1.jpg";
+import parquecanino2 from "../assets/carrusel-parquecanino2.jpg";
+import creatorsBackground from "../assets/creatorsBackground.jpg"
 import logoReact from "../assets/oasis.png";
+
+function useDelayedCarousel(setIndexFn, delayStart, interval, imagesLength) {
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      const timer = setInterval(() => {
+        setIndexFn(prev => (prev + 1) % imagesLength);
+      }, interval);
+      // Limpiar el intervalo
+      return () => clearInterval(timer);
+    }, delayStart);
+
+    // Limpiar el timeout si se desmonta antes
+    return () => clearTimeout(delay);
+  }, []);
+}
 
 export default function Home() {
   const navigate = useNavigate();
+  const imagesSetFuente = [fuente1, fuente2];
+  const imagesSetBanco = [banco1, banco2];
+  const imagesSetParqueCanino = [parquecanino1, parquecanino2];
+
+  const [index1, setIndex1] = useState(0);
+  const [index2, setIndex2] = useState(0);
+  const [index3, setIndex3] = useState(0);
+
+  useDelayedCarousel(setIndex1, 0, 9000, imagesSetFuente.length);
+  useDelayedCarousel(setIndex2, 3000, 9000, imagesSetBanco.length);
+  useDelayedCarousel(setIndex3, 6000, 9000, imagesSetParqueCanino.length);
 
   return (
     <div className="home-page-content">
       <div className="about-us-div">
-        <p>sobre nosotros</p>
+        <p>SOBRE NOSOTROS</p>
         <p>En Oasis, creemos que las ciudades están llenas de pequeños tesoros ocultos: una <span className="underlined-text">fuente de agua fresca</span> en verano, un <span className="underlined-text">banco a la sombra</span> para descansar, un <span className="underlined-text">parque canino</span>  donde tu mascota pueda correr libremente... Espacios útiles, accesibles y muchas veces invisibles. <br /><br />
         Nuestra misión es ayudarte a encontrar esos lugares que no suelen estar tan señalizados, pero que marcan la diferencia en tu día a día. Oasis nace con la idea de ser ese punto de referencia inesperado, como <span className="underlined-text">un lugar de descanso en mitad del camino</span> , donde recargar energías y reconectar con tu entorno urbano. <br /><br />
         A través de un mapa interactivo y colaborativo, te invitamos a descubrir y compartir estos rincones. Porque cada persona debería tener a su alcance un pequeño oasis, sin importar por dónde camine.</p>
+      </div>
+      <div className="carrusel-div">
+        <div className="carousel-section">
+          
+          <img src={imagesSetFuente[index1]} alt="Sección 1" className="carousel-image" />
+          <div className="image-overlay">
+            <p>FUENTES</p>
+            <p>"Encuentra fuentes de agua para saciar tu sed cuando más lo necesites"</p>
+          </div>
+        </div>
+        <div className="carousel-section">
+          <img src={imagesSetBanco[index2]} alt="Sección 2" className="carousel-image" />
+          <div className="image-overlay">
+            <p>BANCOS</p>
+            <p>"Siempre es bueno saber donde hayar un asiento para descansar tras un paseo"</p>
+          </div>
+        </div>
+        <div className="carousel-section">
+          <img src={imagesSetParqueCanino[index3]} alt="Sección 3" className="carousel-image" />
+          <div className="image-overlay">
+            <p>PARQUES CANINOS</p>
+            <p>"Vuestras mascotas también necesitan pasar el rato en una zona preparada para ellos"</p>
+          </div>
+        </div>
+      </div>
+      <div
+        className="creators-div"
+        style={{ backgroundImage: `url(${creatorsBackground})` }}
+      >
+        <p>#WeAreOasis</p>
       </div>
       <div className="logo-div">
         <p>Pincha aquí para acceder al mapa</p>
