@@ -23,7 +23,8 @@ public class Controller_Comentario {
     }
 
     @PostMapping("/comentario")
-    public Comentario crear(@RequestBody Comentario comentario){
+    public Comentario crear(@RequestBody Comentario comentario) {
+        System.out.println("JSON recibido: " + comentario); // Verifica si llegan los datos
         return serviceComentario.crear(comentario);
     }
 
