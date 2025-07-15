@@ -1,12 +1,5 @@
-/* ESTILOS HOME PAGE */
-.home-page-content{
-  display: flex;
-  /* background-image: url('./assets/homeBackground.png'); */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  min-height: 100vh;
+*{
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 /* ESTILOS PAGINA PRINCIPAL */
@@ -28,7 +21,7 @@
   align-items: center;
 }
 
-.App, .App > *{ 
+.App, .App > *, .home-page-content{ 
   padding-top: 80px;
 }
 
