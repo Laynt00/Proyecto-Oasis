@@ -9,12 +9,6 @@ import {signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, createU
 import { getAuth } from "firebase/auth";
 
 
-import {useState} from "react";
-import {app} from "../assets/firebase";
-import {signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword} from "firebase/auth";
-import { getAuth } from "firebase/auth";
-
-
 export default function RegisterPage(){
     const navigate = useNavigate();
 
@@ -33,20 +27,6 @@ export default function RegisterPage(){
         }
     }
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [loginError, setLoginError] = useState('');
-
-    const auth = getAuth(app);
-    const HandleSignUp = async(e)=>{
-        e.preventDefault();
-        try{
-            await createUserWithEmailAndPassword(auth, email, password);
-            console.log("Usuario creado exitosamente.");    
-        }catch(error){
-            console.log(error);
-        }
-    }
 
     return(
         <div className="register-page-div">
