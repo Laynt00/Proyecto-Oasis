@@ -12,6 +12,21 @@ import { getAuth } from "firebase/auth";
 export default function RegisterPage(){
     const navigate = useNavigate();
 
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loginError, setLoginError] = useState('');
+
+    const auth = getAuth(app);
+    const HandleSignUp = async(e)=>{
+        e.preventDefault();
+        try{
+            await createUserWithEmailAndPassword(auth, email, password);
+            console.log("Usuario creado exitosamente.");    
+        }catch(error){
+            console.log(error);
+        }
+    }
+
     return(
         <div className="register-page-div">
             <button className="back-to-map" onClick={() => navigate("/map")}>Volver al mapa</button>
@@ -36,7 +51,7 @@ export default function RegisterPage(){
                         <img src={passwordIcon} className="form-icon" />
                         <input type="password" placeholder="Repetir contraseña" />
                     </div>
-                    <button className="button-register-form" onClick={() => navigate("/login")}>Registrarse</button>
+                    <button className="button-register-form" onClick={()=>HandleSignUp}>Registrarse</button>
                 </form>
             </div>
             <div className="div-login">
