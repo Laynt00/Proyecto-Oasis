@@ -1,4 +1,27 @@
 package com.backend.backend.model;
 
-public class DogPark {
+import jakarta.persistence.*;
+
+@Entity
+@DiscriminatorValue("DOG_PARK")
+public class DogPark extends Resource {
+    @Column(name = "photo")
+    private String photo;
+
+    // Constructores
+    public DogPark() {}
+
+    public DogPark(String name, String position, Comment comment, String photo) {
+        super(name, comment, position);
+        this.photo = photo;
+    }
+
+    // Getters y setters
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
 }
