@@ -8,7 +8,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
-@RequestMapping("/Comentario")
+@RequestMapping("/api")
 public class Controller_Comentario {
     private final Service_Comentario serviceComentario;
 
@@ -17,12 +17,12 @@ public class Controller_Comentario {
     }
 
     //GET de comentarios
-    @GetMapping
+    @GetMapping("/comentario")
     public List<Comentario> verTodos(){
         return serviceComentario.findAll();
     }
 
-    @PostMapping
+    @PostMapping("/comentario")
     public Comentario crear(@RequestBody Comentario comentario){
         return serviceComentario.crear(comentario);
     }

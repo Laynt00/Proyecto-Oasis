@@ -6,65 +6,82 @@ import {
   Marker,
   Popup,
   useMapEvents,
-  GeoJSON,
+  GeoJSON
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
-import PopUpLogin from "./PopUpLogin";
+
+import PopUpLogin from './PopUpLogin';
+import LoginPage from './LoginPage'
+import RegisterPage from './RegisterPage';
 import SearchBar from "./SearchBar";
 import FilterDropdown from "./FilterDropdown";
-import userIcon from "../assets/userIcon.png";
-import "./SourceInfoPanel.css";
-import fuentecillaImg from "../assets/fuentecilla.png";
+import userIcon from '../assets/userIcon.png';
+// import WelcomePage from './WelcomePage';
+import ShowComments from './ShowComments';
+import './SourceInfoPanel.css';
+import fuentecillaImg from '../assets/fuentecilla.png';
+
 
 import proj4 from "proj4";
 
 proj4.defs("EPSG:25830", "+proj=utm +zone=30 +ellps=GRS80 +units=m +no_defs");
 
-function Map() {
+function Home() {
   const [fuentes, setFuentes] = useState([]);
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [selectedSource, setSelectedSource] = useState(null);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch("/apidata/dataFuentes.geojson");
-      const geojson = await response.json();
+  const fetchFontData = async () => {
+  try {
+    const response = await fetch("http://localhost:8080/api/fuente");
+    const data = await response.json(); // No es un GeoJSON estándar
+    console.log("Data fetched successfully:", data);
 
-      const datosProcesados = geojson.features.map((feature) => ({
-        nombre: feature.properties.nombre,
-        coordenadas: feature.geometry.coordinates,
-      }));
-      setFuentes(datosProcesados);
+    // Procesamiento para setFuentes (si necesitas los datos originales)
+    setFuentes(data);
 
-      const convertedFeatures = geojson.features.map((feature) => {
-        const [x, y] = feature.geometry.coordinates;
-        const [lon, lat] = proj4("EPSG:25830", "WGS84", [x, y]);
-        return {
-          ...feature,
-          geometry: {
-            ...feature.geometry,
-            coordinates: [lon, lat],
-          },
-        };
-      });
+    // Convertir datos al formato esperado por tu componente
+    const datosProcesados = data.map(item => ({
+      nombre: item.nombre,
+      coordenadas: [item.x, item.y]
+    }));
 
-      setGeoJsonData({
-        ...geojson,
-        features: convertedFeatures,
-      });
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
+    // Transformación de coordenadas EPSG:25830 a WGS84 (lon, lat)
+    const convertedFeatures = data.map((item) => {
+      const [lon, lat] = proj4("EPSG:25830", "WGS84", [item.x, item.y]);
+      return {
+        type: "Feature", // Necesario para GeoJSON
+        properties: {
+          nombre: item.nombre,
+          id: item.id
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [lon, lat]
+        }
+      };
+    });
+
+    // Crear un GeoJSON válido con las features convertidas
+    setGeoJsonData({
+      type: "FeatureCollection",
+      features: convertedFeatures
+    });
+
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
 
   useEffect(() => {
-    fetchData();
+    fetchFontData();
   }, []);
 
+  // Configuración de iconos de Leaflet
   const DefaultIcon = L.icon({
     iconUrl: icon,
     shadowUrl: iconShadow,
@@ -73,7 +90,6 @@ function Map() {
     popupAnchor: [1, -34],
     shadowSize: [41, 41],
   });
-
   L.Marker.prototype.options.icon = DefaultIcon;
 
   const onEachFeature = (feature, layer) => {
@@ -92,6 +108,8 @@ function Map() {
         ">+info</button>
       `;
       popupDiv.querySelector(".more-info-btn").addEventListener("click", () => {
+        console.log("Más información sobre:", feature.properties);
+        // Hacer una llamada a la API para obtener los comentarios específicos de esta fuente
         setSelectedSource(feature);
       });
 
@@ -101,7 +119,7 @@ function Map() {
 
   const pointToLayer = (feature, latlng) => {
     return L.marker(latlng, {
-      icon: DefaultIcon,
+      icon: DefaultIcon
     });
   };
 
@@ -140,41 +158,28 @@ function Map() {
           <SearchBar />
         </div>
       </div>
-
+      
       {showLoginPopup && (
         <PopUpLogin onClose={() => setShowLoginPopup(false)} />
       )}
 
       <div className="map-container">
-        <MapContainer
-          center={initialPosition}
-          zoom={16}
-          scrollWheelZoom={true}
-          zoomControl={false}
-        >
+        <MapContainer center={initialPosition} zoom={16} scrollWheelZoom={true} zoomControl={false}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-
-          {/* Zoom manual */}
+          {/* Icono Zoom + / - */}
           <div className="leaflet-bottom leaflet-left">
             <div className="leaflet-control leaflet-bar leaflet-control-zoom">
-              <a className="leaflet-control-zoom-in" href="#" title="Zoom in">
-                +
-              </a>
-              <a className="leaflet-control-zoom-out" href="#" title="Zoom out">
-                −
-              </a>
+              <a className="leaflet-control-zoom-in" href="#" title="Zoom in">+</a>
+              <a className="leaflet-control-zoom-out" href="#" title="Zoom out">−</a>
             </div>
           </div>
-
           <Marker position={initialPosition}>
             <Popup>Estás aquí</Popup>
           </Marker>
-
           <LocationMarker />
-
           {geoJsonData && (
             <GeoJSON
               data={geoJsonData}
@@ -184,57 +189,30 @@ function Map() {
           )}
         </MapContainer>
 
-        {selectedSource && <div className="overlay"></div>}
-
+        {/* PANEL DERECHO DE INFORMACIÓN */}
         {selectedSource && (
-          <div className="source-panel">
-            <button
-              className="close-btn"
-              onClick={() => setSelectedSource(null)}
-            >
-              ✕
-            </button>
+        <div className="source-panel">
+          <button className="close-btn" onClick={() => setSelectedSource(null)}>✕</button>
 
-            <div className="panel-header">
-              <div className="panel-text">
-                <h2>{selectedSource.properties.nombre}</h2>
-                <p>
-                  <strong>Calle:</strong>{" "}
-                  {selectedSource.properties.calle || "Nombredecalle"}
-                </p>
-                <p>
-                  <strong>Estado:</strong>{" "}
-                  <span className="estado-ok">OK</span>
-                </p>
-                <p>
-                  <small>Última actualización de estado</small>
-                </p>
-                <p>
-                  <strong>10/10/2025</strong>
-                </p>
-              </div>
-              <img
-                src={fuentecillaImg}
-                alt="Fuente"
-                className="panel-img"
-              />
+          <div className="panel-header">
+            <div className="panel-text">
+              <h2>{selectedSource.properties.nombre}</h2>
+              <p><strong>Calle:</strong> {selectedSource.properties.calle || "Nombredecalle"}</p>
+              <p><strong>Estado:</strong> <span className="estado-ok">OK</span></p>
+              <p><small>Última actualización de estado</small></p>
+              <p><strong>10/10/2025</strong></p>
             </div>
+            <img src={fuentecillaImg} alt="Fuente" className="panel-img" />
 
-            <div className="comentarios">
-              <h3>Comentarios</h3>
-              <input type="text" placeholder="Deja tu comentario..." />
-              <div className="comentario">
-                <span>
-                  <strong>Usuario A</strong> • Hace un tiempo
-                </span>
-                <p>Buen sitio para recargar agua</p>
-              </div>
-            </div>
+
           </div>
-        )}
+              <ShowComments></ShowComments>
+        </div>
+      )}
+
       </div>
     </div>
   );
 }
 
-export default Map;
+export default Home;
