@@ -46,10 +46,9 @@ function Home() {
 
     // Convertir datos al formato esperado por tu componente
     const datosProcesados = data.map(item => ({
-      nombre: item.nombre,
-      coordenadas: [item.x, item.y]
+      nombre: item.name,
+      coordenadas: [item.coord_x, item.coord_y]
     }));
-
     // Transformación de coordenadas EPSG:25830 a WGS84 (lon, lat)
     const convertedFeatures = data.map((item) => {
       const [lon, lat] = proj4("EPSG:25830", "WGS84", [item.x, item.y]);

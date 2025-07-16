@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/fonts")
+@CrossOrigin(origins = "*") // Permite cualquier origen
 public class FontController {
     private final FontRepository fontRepository;
     private final CommentRepository commentRepository;
