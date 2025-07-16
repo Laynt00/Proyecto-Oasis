@@ -13,6 +13,11 @@
   width: fit-content;
   height: 630px;
   display: flex;
+  background-image: url('../assets/mainBackground.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -56,10 +61,20 @@
 }
 
 .carousel-image {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: opacity 0.5s ease;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  pointer-events: none;
+}
+
+.carousel-image.active {
+  opacity: 1;
+  z-index: 0;
 }
 
 .image-overlay {
@@ -127,31 +142,43 @@
 /* Seccion Logo */
 .logo-div {
   position: fixed;
-  bottom: 20px;
-  right: 10px;
+  bottom: 0;
+  right: 0;
+  width: 200px;
+  height: 200px;
+  background-color: white;
+  border-top-left-radius: 100%;
+  z-index: 5;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  text-align: center;
-  z-index: 5;
-
+  justify-content: flex-end;
+  padding-bottom: 20px;
+  padding-left: 40px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease;
 }
 
-.logo-div p {
-  max-width: 120px;
-  font-size: 0.9rem;
-  margin-bottom: 8px;
-}
-
 .logo-div:hover {
-  transform: scale(1.1); 
+  transform: scale(1.1) translate(-10px, -10px);
 }
 
 .logo {
   width: 100px;
+  height: 100px;
   border-radius: 10px;
-  box-shadow: 0px 0px 40px rgb(255, 255, 255);
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
 }
 
+.curved-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.curved-text text {
+  font-size: 14px;
+  fill: black;
+  font-weight: bold;
+}
