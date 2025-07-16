@@ -19,9 +19,8 @@ public class Comentario {
     @JoinColumn(lugar = "id_lugar")
     @JoinColumn(usuario = "id_usuario")
     private Lugar lugar;
-    private User usuario;
+    private Usuario usuario;
 
-    public Comentario(){}
     public Comentario(String texto, Lugar lugar, User usuario) {
         this.texto = texto;
         this.lugar = lugar;

@@ -98,3 +98,20 @@
   position:relative;
   top:1px;
 }
+.popup-button-blue {
+  background-color: #2196f3;
+  border: 1px solid #2196f3;
+}
+
+.popup-button-blue:hover {
+  background: linear-gradient(to bottom, #2196f3 5%, #64b5f6 100%);
+}
+
+.popup-button-red {
+  background-color: #e53935;
+  border: 1px solid #e53935;
+}
+
+.popup-button-red:hover {
+  background: linear-gradient(to bottom, #e53935 5%, #ef5350 100%);
+}

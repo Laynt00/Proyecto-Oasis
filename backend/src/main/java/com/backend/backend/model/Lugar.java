@@ -26,11 +26,6 @@ public class Lugar {
     private List<Comentario> comentarios = new ArrayList<>();
 
 
-    @OneToMany
-    @JoinColumn (name="id_comentario")
-    private List<Comentario> comentarios = new ArrayList<>();
-
-
     public Lugar(){}
 
     public Lugar(String nombre, double x, double y){

@@ -5,10 +5,13 @@ import { app } from "../assets/firebase";
 
 import emailIcon from "../assets/emailIcon.png";
 import passwordIcon from "../assets/passwordIcon.png";
+import { useAuth } from "./AuthContext";
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const auth = getAuth(app);
+
+  const { login } = useAuth(); // ✅ Hook usado correctamente dentro del componente
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,7 +21,8 @@ export default function LoginPage() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       console.log("Inicio de sesión exitoso");
-      navigate("/home");
+      login(); // ✅ Activar sesión
+      navigate("/map");
     } catch (error) {
       console.error("Error al iniciar sesión:", error.message);
       alert("Correo o contraseña incorrectos");
