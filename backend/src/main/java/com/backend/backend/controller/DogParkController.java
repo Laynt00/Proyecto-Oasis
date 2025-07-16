@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/dogparks")
+@CrossOrigin(origins = "*") // Permite cualquier origen
 public class DogParkController {
     private final DogParkRepository dogParkRepository;
     private final CommentRepository commentRepository;
