@@ -1,40 +1,69 @@
-import userIcon from "../assets/userIcon.png"
-import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useRef } from "react";
+import { useAuth } from "./AuthContext";
 
-export default function PopUpLogin({ onClose }){
-    const popupRef = useRef(null);
-    const navigate = useNavigate();
+import userIcon from "../assets/userIcon.png";
 
-    useEffect(() => {
-        function handleClickOutside(event) {
-        if (popupRef.current && !popupRef.current.contains(event.target)) {
-            onClose(); 
-        }
-        }
-        document.addEventListener("mousedown", handleClickOutside);
+export default function PopUpLogin({ onClose }) {
+  const popupRef = useRef(null);
+  const navigate = useNavigate();
+  const { iniciada, logout } = useAuth();
 
-        return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [onClose]);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        onClose();
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [onClose]);
 
-    return(
+  return (
+    <div ref={popupRef} className="popup-login">
+      <figure className="user-appearance">
+        <img src={userIcon} className="userIcon" />
+        <figcaption>
+          {iniciada ? "USUARIO REGISTRADO" : "USUARIO NO REGISTRADO"}
+        </figcaption>
+      </figure>
+
+      {iniciada ? (
         <>
-        <div ref={popupRef} className="popup-login">
-            <figure className="user-appearance">
-                <img src={userIcon} className="userIcon"/>
-                <figcaption>USUARIO NO REGISTRADO</figcaption>
-            </figure>
-            <div>
-                <p>¿Eres un nuevo usuario?</p>
-                <button className="popup-button" onClick={() => navigate("/register")}>Registrarse</button>
-            </div>
-            <div>
-                <p>¿Ya tienes una cuenta?</p>
-                <button className="popup-button" onClick={() => navigate("/login")}>Iniciar Sesión</button>
-            </div>
-        </div>
+          <div>
+            <p>¿Quieres registrar un lugar?</p>
+            <button
+              className="popup-button popup-button-blue"
+              onClick={() => alert("Aquí irá tu lógica de crear lugar")}
+            >
+              Crear registro
+            </button>
+          </div>
+          <div>
+            <button
+              className="popup-button popup-button-red"
+              onClick={logout}
+            >
+              Cerrar sesión
+            </button>
+          </div>
         </>
-    )
+      ) : (
+        <>
+          <div>
+            <p>¿Eres un nuevo usuario?</p>
+            <button className="popup-button" onClick={() => navigate("/register")}>
+              Registrarse
+            </button>
+          </div>
+          <div>
+            <p>¿Ya tienes una cuenta?</p>
+            <button className="popup-button" onClick={() => navigate("/login")}>
+              Iniciar Sesión
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
