@@ -51,7 +51,7 @@ function Home() {
     }));
     // Transformación de coordenadas EPSG:25830 a WGS84 (lon, lat)
     const convertedFeatures = data.map((item) => {
-      const [lon, lat] = proj4("EPSG:25830", "WGS84", [item.x, item.y]);
+      const [lon, lat] = proj4("EPSG:25830", "WGS84", [item.coord_x, item.coord_y]);
       return {
         type: "Feature", // Necesario para GeoJSON
         properties: {

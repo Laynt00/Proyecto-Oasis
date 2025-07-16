@@ -1,6 +1,7 @@
 package com.backend.backend.service;
 
 import com.backend.backend.model.Font;
+import com.backend.backend.model.ResourceType;
 import com.backend.backend.repository.FontRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +21,7 @@ public class FontServiceImpl implements FontService {
 
     @Override
     public List<Font> findAll() {
-        return fontRepository.findAll();
+        return fontRepository.findByType("FONT");
     }
 
     @Override

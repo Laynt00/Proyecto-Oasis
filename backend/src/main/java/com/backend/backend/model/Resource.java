@@ -22,6 +22,10 @@ public abstract class Resource {
 
     private Float coord_y;
 
+    @Enumerated(EnumType.STRING)
+    private ResourceType type;
+
+
     // Constructores, getters y setters
     public Resource() {}
 
