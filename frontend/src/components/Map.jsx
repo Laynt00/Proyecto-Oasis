@@ -37,7 +37,7 @@ function Home() {
 
   const fetchFontData = async () => {
   try {
-    const response = await fetch("http://localhost:8080/api/fuente");
+    const response = await fetch("http://localhost:8080/api/fonts");
     const data = await response.json(); // No es un GeoJSON estándar
     console.log("Data fetched successfully:", data);
 
