@@ -11,5 +11,5 @@ public interface FontService {
     Font save(Font font);
     Font update(Long id, Font font);
     void delete(Long id);
-    List<Font> findByCondition(String condition);
+    List<Font> findByStatus(String status);
 }

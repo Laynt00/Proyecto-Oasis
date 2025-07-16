@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface FontRepository extends JpaRepository<Font, Long> {
-    List<Font> findByCondition(String condition);
+    List<Font> findByStatus(String status);
 }

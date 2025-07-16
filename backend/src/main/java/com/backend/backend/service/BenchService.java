@@ -11,5 +11,5 @@ public interface BenchService {
     Bench save(Bench bench);
     Bench update(Long id, Bench bench);
     void delete(Long id);
-    List<Bench> findByCondition(String condition);
+    List<Bench> findByStatus(String status);
 }

@@ -45,9 +45,10 @@ public class FontController {
         return fontRepository.findById(id)
                 .map(font -> {
                     font.setName(fontDetails.getName());
-                    font.setPosition(fontDetails.getPosition());
+                    font.setCoord_x(fontDetails.getCoord_x());
+                    font.setCoord_y(fontDetails.getCoord_y());
                     font.setComment(fontDetails.getComment());
-                    font.setCondition(fontDetails.getCondition());
+                    font.setStatus(fontDetails.getStatus());
                     font.setPhoto(fontDetails.getPhoto());
                     return ResponseEntity.ok(fontRepository.save(font));
                 })

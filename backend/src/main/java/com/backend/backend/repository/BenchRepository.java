@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface BenchRepository extends JpaRepository<Bench, Long> {
-    List<Bench> findByCondition(String condition);
+    List<Bench> findByStatus(String status);
 }

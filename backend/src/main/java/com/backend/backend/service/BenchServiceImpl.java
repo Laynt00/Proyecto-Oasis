@@ -41,9 +41,10 @@ public class BenchServiceImpl implements BenchService {
         return benchRepository.findById(id)
                 .map(existingBench -> {
                     existingBench.setName(bench.getName());
-                    existingBench.setPosition(bench.getPosition());
+                    existingBench.setCoord_x(bench.getCoord_x());
+                    existingBench.setCoord_y(bench.getCoord_y());
                     existingBench.setComment(bench.getComment());
-                    existingBench.setCondition(bench.getCondition());
+                    existingBench.setStatus(bench.getStatus());
                     existingBench.setPhoto(bench.getPhoto());
                     return benchRepository.save(existingBench);
                 })
@@ -56,7 +57,7 @@ public class BenchServiceImpl implements BenchService {
     }
 
     @Override
-    public List<Bench> findByCondition(String condition) {
-        return benchRepository.findByCondition(condition);
+    public List<Bench> findByStatus(String status) {
+        return benchRepository.findByStatus(status);
     }
 }

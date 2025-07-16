@@ -32,7 +32,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comment save(Comment comment) {
         // Verificar que el usuario existe
-        if (!userService.existsById(comment.getUser().getId())) {
+        if (userService.findById(comment.getUser().getId()).isEmpty()) {
             throw new RuntimeException("User not found with id: " + comment.getUser().getId());
         }
         return commentRepository.save(comment);

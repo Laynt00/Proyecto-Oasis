@@ -45,7 +45,8 @@ public class DogParkController {
         return dogParkRepository.findById(id)
                 .map(dogPark -> {
                     dogPark.setName(dogParkDetails.getName());
-                    dogPark.setPosition(dogParkDetails.getPosition());
+                    dogPark.setCoord_x(dogParkDetails.getCoord_x());
+                    dogPark.setCoord_y(dogParkDetails.getCoord_y());
                     dogPark.setComment(dogParkDetails.getComment());
                     dogPark.setPhoto(dogParkDetails.getPhoto());
                     return ResponseEntity.ok(dogParkRepository.save(dogPark));

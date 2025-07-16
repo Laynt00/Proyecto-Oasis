@@ -41,7 +41,8 @@ public class DogParkServiceImpl implements DogParkService {
         return dogParkRepository.findById(id)
                 .map(existingDogPark -> {
                     existingDogPark.setName(dogPark.getName());
-                    existingDogPark.setPosition(dogPark.getPosition());
+                    existingDogPark.setCoord_x(dogPark.getCoord_x());
+                    existingDogPark.setCoord_y(dogPark.getCoord_y());
                     existingDogPark.setComment(dogPark.getComment());
                     existingDogPark.setPhoto(dogPark.getPhoto());
                     return dogParkRepository.save(existingDogPark);

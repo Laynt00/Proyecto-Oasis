@@ -41,9 +41,10 @@ public class FontServiceImpl implements FontService {
         return fontRepository.findById(id)
                 .map(existingFont -> {
                     existingFont.setName(font.getName());
-                    existingFont.setPosition(font.getPosition());
+                    existingFont.setCoord_x(font.getCoord_x());
+                    existingFont.setCoord_y(font.getCoord_y());
                     existingFont.setComment(font.getComment());
-                    existingFont.setCondition(font.getCondition());
+                    existingFont.setStatus(font.getStatus());
                     existingFont.setPhoto(font.getPhoto());
                     return fontRepository.save(existingFont);
                 })
@@ -56,7 +57,7 @@ public class FontServiceImpl implements FontService {
     }
 
     @Override
-    public List<Font> findByCondition(String condition) {
-        return fontRepository.findByCondition(condition);
+    public List<Font> findByStatus(String status) {
+        return fontRepository.findByStatus(status);
     }
 }

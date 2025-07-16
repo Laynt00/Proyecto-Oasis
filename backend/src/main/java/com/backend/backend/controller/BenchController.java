@@ -45,9 +45,10 @@ public class BenchController {
         return benchRepository.findById(id)
                 .map(bench -> {
                     bench.setName(benchDetails.getName());
-                    bench.setPosition(benchDetails.getPosition());
+                    bench.setCoord_x(benchDetails.getCoord_x());
+                    bench.setCoord_y(benchDetails.getCoord_y());
                     bench.setComment(benchDetails.getComment());
-                    bench.setCondition(benchDetails.getCondition());
+                    bench.setStatus(benchDetails.getStatus());
                     bench.setPhoto(benchDetails.getPhoto());
                     return ResponseEntity.ok(benchRepository.save(bench));
                 })

@@ -18,16 +18,18 @@ public abstract class Resource {
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    @Column(name = "position")
-    private String position;
+    private Float coord_x;
+
+    private Float coord_y;
 
     // Constructores, getters y setters
     public Resource() {}
 
-    public Resource(String name, Comment comment, String position) {
+    public Resource(String name, Comment comment, Float coord_x, Float coord_y) {
         this.name = name;
         this.comment = comment; // Requiere un objeto Comment
-        this.position = position;
+        this.coord_x = coord_x;
+        this.coord_y = coord_y;
     }
 
     // Getters y setters
@@ -55,11 +57,19 @@ public abstract class Resource {
         this.comment = comment;
     }
 
-    public String getPosition() {
-        return position;
+    public Float getCoord_x() {
+        return coord_x;
     }
 
-    public void setPosition(String position) {
-        this.position = position;
+    public void setCoord_x(Float coord_x) {
+        this.coord_x = coord_x;
+    }
+
+    public Float getCoord_y() {
+        return coord_y;
+    }
+
+    public void setCoord_y(Float coord_y) {
+        this.coord_y = coord_y;
     }
 }
