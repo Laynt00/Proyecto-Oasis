@@ -68,7 +68,7 @@ export default function LoginPage() {
             />
           </div>
 
-          <button type="submit" className="button-login-form">
+          <button type="submit" className="button-login-form" onClick={() => navigate("/map")}>
             Iniciar Sesión
           </button>
         </form>
