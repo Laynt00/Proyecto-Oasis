@@ -11,6 +11,7 @@ import java.util.List;
 @RequestMapping("/Usuario")
 @CrossOrigin(origins = "http://localhost:5173")
 public class Controller_Usuario {
+
     private final Service_Usuario serviceUsuario;
 
     public Controller_Usuario(Service_Usuario serviceUsuario) {
@@ -30,13 +31,13 @@ public class Controller_Usuario {
     }
 
     //PUT de usuario
-    @PutMapping("/{ID}")
+    @PutMapping("/{id}")
     public Usuario actualizar(@PathVariable Long id, @RequestBody Usuario usuario) {
         return  serviceUsuario.actualizar(id, usuario);
     }
 
     //DELETE de usuario
-    @DeleteMapping("/{ID}")
+    @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {
         serviceUsuario.deleteById(id);
     }

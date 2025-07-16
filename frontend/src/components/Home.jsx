@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "../App.css";
 import {
   MapContainer,
@@ -6,15 +6,19 @@ import {
   Marker,
   Popup,
   useMapEvents,
-  GeoJSON
+  GeoJSON,
+  useMap
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import "leaflet-routing-machine";
+import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
+
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 
 import PopUpLogin from './PopUpLogin';
-import LoginPage from './LoginPage'
+import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
 import SearchBar from "./SearchBar";
 import FilterDropdown from "./FilterDropdown";
@@ -23,16 +27,52 @@ import WelcomePage from './WelcomePage';
 import './SourceInfoPanel.css';
 import fuentecillaImg from '../assets/fuentecilla.png';
 
-
 import proj4 from "proj4";
 
 proj4.defs("EPSG:25830", "+proj=utm +zone=30 +ellps=GRS80 +units=m +no_defs");
+
+function RoutingControl({ from, to }) {
+  const map = useMap();
+  const routingControlRef = useRef(null);
+
+  useEffect(() => {
+    if (!from || !to) return;
+
+    if (routingControlRef.current) {
+      map.removeControl(routingControlRef.current);
+    }
+
+    routingControlRef.current = L.Routing.control({
+      waypoints: [
+        L.latLng(from.lat, from.lng),
+        L.latLng(to[1], to[0]) // to = [lng, lat]
+      ],
+      lineOptions: {
+        styles: [{ color: "red", weight: 3 }]
+      },
+      createMarker: () => null,
+      addWaypoints: false,
+      routeWhileDragging: false,
+      draggableWaypoints: false
+    }).addTo(map);
+
+    return () => {
+      if (routingControlRef.current) {
+        map.removeControl(routingControlRef.current);
+        routingControlRef.current = null;
+      }
+    };
+  }, [from, to, map]);
+
+  return null;
+}
 
 function Home() {
   const [fuentes, setFuentes] = useState([]);
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [selectedSource, setSelectedSource] = useState(null);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [userPosition, setUserPosition] = useState(null); // <-- estado para posición usuario
 
   const fetchData = async () => {
     try {
@@ -112,21 +152,21 @@ function Home() {
     });
   };
 
+  // Actualizamos LocationMarker para guardar la posición en estado y no solo internamente
   function LocationMarker() {
-    const [position, setPosition] = useState(null);
     const map = useMapEvents({
       click() {
         map.locate();
       },
       locationfound(e) {
-        setPosition(e.latlng);
+        setUserPosition(e.latlng);
         map.flyTo(e.latlng, map.getZoom());
       },
     });
 
-    return position === null ? null : (
-      <Marker position={position}>
-        <Popup>You are here</Popup>
+    return userPosition === null ? null : (
+      <Marker position={userPosition}>
+        <Popup>Estás aquí</Popup>
       </Marker>
     );
   }
@@ -136,6 +176,10 @@ function Home() {
   const handleFilterChange = (filters) => {
     console.log("Filtros seleccionados:", filters);
   };
+
+  // Sacamos las coordenadas para RoutingControl, si hay fuente seleccionada y posición usuario
+  const routeFrom = userPosition;
+  const routeTo = selectedSource ? selectedSource.geometry.coordinates : null;
 
   return (
     <div className="App">
@@ -184,45 +228,44 @@ function Home() {
               pointToLayer={pointToLayer}
             />
           )}
+
+          {/* Aquí incluimos RoutingControl solo si tenemos ambos puntos */}
+          {routeFrom && routeTo && (
+            <RoutingControl from={routeFrom} to={routeTo} />
+          )}
         </MapContainer>
 
-          {selectedSource && <div className="overlay"></div>}
+        {selectedSource && <div className="overlay"></div>}
 
-          {selectedSource && (
-            <div className="source-panel">
-              {/* ... contenido del panel ... */}
-            </div>
-          )}
+        {selectedSource && (
+          <div className="source-panel">
+            {/* ... contenido del panel ... */}
+          </div>
+        )}
 
         {/* PANEL DERECHO DE INFORMACIÓN */}
         {selectedSource && (
-        <div className="source-panel">
-          <button className="close-btn" onClick={() => setSelectedSource(null)}>✕</button>
+          <div className="source-panel">
+            <button className="close-btn" onClick={() => setSelectedSource(null)}>✕</button>
 
-          <div className="panel-header">
-            <div className="panel-text">
-              <h2>{selectedSource.properties.nombre}</h2>
-              <p><strong>Calle:</strong> {selectedSource.properties.calle || "Nombredecalle"}</p>
-              <p><strong>Estado:</strong> <span className="estado-ok">OK</span></p>
-              <p><small>Última actualización de estado</small></p>
-              <p><strong>10/10/2025</strong></p>
+            <div className="panel-header">
+              <div className="panel-text">
+                <h2>{selectedSource.properties.nombre}</h2>
+                <p><strong>Calle:</strong> {selectedSource.properties.calle || "Nombredecalle"}</p>
+                <p><strong>Estado:</strong> <span className="estado-ok">OK</span></p>
+                <p><small>Última actualización de estado</small></p>
+                <p><strong>10/10/2025</strong></p>
+              </div>
+              <img src={fuentecillaImg} alt="Fuente" className="panel-img" />
             </div>
-            <img src={fuentecillaImg} alt="Fuente" className="panel-img" />
 
-
-          </div>
-
-          <div className="comentarios">
-            <h3>Comentarios</h3>
-            <input type="text" placeholder="Deja tu comentario..." />
-            <div className="comentario">
-              <span><strong>Usuario A</strong> • Hace un tiempo</span>
-              <p>Buen sitio para recargar agua</p>
+            <div className="comentarios">
+              <h3>Comentarios</h3>
+              <input type="text" placeholder="Deja tu comentario..." />
+              <button>Enviar</button>
             </div>
           </div>
-        </div>
-      )}
-
+        )}
       </div>
     </div>
   );

@@ -15,13 +15,26 @@ export default function RegisterPage(){
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loginError, setLoginError] = useState('');
+    const [name, setName] = useState('');
 
     const auth = getAuth(app);
     const HandleSignUp = async(e)=>{
         e.preventDefault();
         try{
-            await createUserWithEmailAndPassword(auth, email, password);
+           const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             console.log("Usuario creado exitosamente.");    
+            const user = userCredential.user;
+            await fetch("http://localhost:3306/usuario", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: email,
+                    nombre: name
+                }),
+            });
+            console.log("Usuario creado y enviado al backend");
         }catch(error){
             console.log(error);
         }
@@ -35,7 +48,10 @@ export default function RegisterPage(){
                 <form className="form-register">
                     <div className="input-wrapper">
                         <img src={nameIcon} className="form-icon" />
-                        <input type="text" placeholder="Nombre" />
+                        <input type="text"
+                        value={name}
+                        onChange={(e)=>setName(e.target.value)}
+                        placeholder="Nombre" />
                     </div>
                     <div className="input-wrapper">
                         <img src={emailIcon} className="form-icon" />
@@ -48,11 +64,13 @@ export default function RegisterPage(){
                         <img src={passwordIcon} className="form-icon" />
                         <input type="password"
                         value={password}
-                        onChange={(e)=>setPassword(e.target.value)} placeholder="Contraseña" />
+                        onChange={(e)=>setPassword(e.target.value)} 
+                        placeholder="Contraseña" />
                     </div>
                     <div className="input-wrapper">
                         <img src={passwordIcon} className="form-icon" />
-                        <input type="password" placeholder="Repetir contraseña" />
+                        <input type="password" 
+                        placeholder="Repetir contraseña" />
                     </div>
                     <button className="button-register-form" onClick={HandleSignUp}>Registrarse</button>
                 </form>
