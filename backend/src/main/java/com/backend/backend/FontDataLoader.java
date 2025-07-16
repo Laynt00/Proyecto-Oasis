@@ -1,5 +1,6 @@
 package com.backend.backend;
 
+import com.backend.backend.model.User;
 import com.backend.backend.repository.CommentRepository;
 import com.backend.backend.repository.FontRepository;
 import com.backend.backend.repository.UserRepository;
