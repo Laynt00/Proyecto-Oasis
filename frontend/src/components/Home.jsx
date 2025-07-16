@@ -49,22 +49,42 @@ export default function Home() {
       </div>
       <div className="carrusel-div">
         <div className="carousel-section">
-          
-          <img src={imagesSetFuente[index1]} alt="Sección 1" className="carousel-image" />
+          {imagesSetFuente.map((img, i) => (
+            <img
+              key={i}
+              src={img}
+              alt={`Fuente ${i}`}
+              className={`carousel-image ${i === index1 ? 'active' : ''}`}
+            />
+          ))}
           <div className="image-overlay">
             <p>FUENTES</p>
             <p>"Encuentra fuentes de agua para saciar tu sed cuando más lo necesites"</p>
           </div>
         </div>
         <div className="carousel-section">
-          <img src={imagesSetBanco[index2]} alt="Sección 2" className="carousel-image" />
+          {imagesSetBanco.map((img, i) => (
+            <img
+              key={i}
+              src={img}
+              alt={`Banco ${i}`}
+              className={`carousel-image ${i === index2 ? 'active' : ''}`}
+            />
+          ))}
           <div className="image-overlay">
             <p>BANCOS</p>
             <p>"Siempre es bueno saber donde hayar un asiento para descansar tras un paseo"</p>
           </div>
         </div>
         <div className="carousel-section">
-          <img src={imagesSetParqueCanino[index3]} alt="Sección 3" className="carousel-image" />
+          {imagesSetParqueCanino.map((img, i) => (
+            <img
+              key={i}
+              src={img}
+              alt={`Parque Canino ${i}`}
+              className={`carousel-image ${i === index3 ? 'active' : ''}`}
+            />
+          ))}
           <div className="image-overlay">
             <p>PARQUES CANINOS</p>
             <p>"Vuestras mascotas también necesitan pasar el rato en una zona preparada para ellos"</p>
@@ -77,8 +97,22 @@ export default function Home() {
       >
         <p>#WeAreOasis</p>
       </div>
+
       <div className="logo-div">
-        <p>Pincha aquí para acceder al mapa</p>
+        <svg width="200" height="200" className="curved-text">
+          <defs>
+            <path
+              id="curve"
+              d="M 25 175 A 160 160 0 0 1 175 25"
+              fill="none"
+            />
+          </defs>
+          <text width="100%">
+            <textPath href="#curve" startOffset="0%">
+              Pincha aquí para acceder al mapa
+            </textPath>
+          </text>
+        </svg>
         <img
           src={logoReact}
           alt="Logo"
@@ -87,6 +121,7 @@ export default function Home() {
           style={{ cursor: "pointer" }}
         />
       </div>
+
     </div>
   );
 }
