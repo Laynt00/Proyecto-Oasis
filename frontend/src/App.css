@@ -21,10 +21,6 @@
   align-items: center;
 }
 
-.App, .App > *, .home-page-content{ 
-  padding-top: 80px;
-}
-
 .top-bar {
   display: grid;
   grid-template-columns: auto 1fr auto;
@@ -35,6 +31,7 @@
   left: 20px;
   right: 20px;
    z-index: 500;
+   padding-top: 80px;
 }
 
 .filter-wrapper {

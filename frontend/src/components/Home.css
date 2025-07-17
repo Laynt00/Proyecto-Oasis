@@ -11,7 +11,7 @@
 /* Sección "Sobre nosotros" */
 .about-us-div{
   width: fit-content;
-  height: 630px;
+  height: 730px;
   display: flex;
   background-image: url('../assets/mainBackground.png');
   background-size: cover;
@@ -23,6 +23,7 @@
   align-items: center;
   text-align: center;
   padding: 220px;
+  padding-top: 300px;
   color: #000000;
 }
 
