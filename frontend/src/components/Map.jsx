@@ -39,8 +39,6 @@ function Home() {
     try {
       const response = await fetch("http://localhost:8080/api/fonts");
       const data = await response.json();
-      console.log("Font data fetched successfully:", data);
-
       setFuentes(data);
 
       const convertedFeatures = data.map((item) => {
@@ -73,8 +71,6 @@ function Home() {
     try {
       const response = await fetch("http://localhost:8080/api/dogparks");
       const data = await response.json();
-      console.log("Dog parks data fetched successfully:", data);
-
       setDogParks(data);
 
       const convertedFeatures = data.map((item) => {
@@ -148,7 +144,6 @@ function Home() {
       `;
       
       popupDiv.querySelector(".more-info-btn").addEventListener("click", () => {
-        console.log("Más información sobre:", feature.properties);
         setSelectedSource(feature);
       });
 
@@ -185,7 +180,6 @@ function Home() {
 
   const handleFilterChange = (filters) => {
     console.log("Filtros seleccionados:", filters);
-    // Aquí puedes implementar la lógica de filtrado si es necesario
   };
 
   return (
@@ -198,18 +192,22 @@ function Home() {
           <SearchBar />
         </div>
       </div>
-      
+
       {showLoginPopup && (
         <PopUpLogin onClose={() => setShowLoginPopup(false)} />
       )}
 
-      <div className="map-container">
+      <div className="map-container" style={{ position: 'relative' }}>
+        {/* Overlay oscuro */}
+        {selectedSource && (
+          <div className="overlay" onClick={() => setSelectedSource(null)}></div>
+        )}
+
         <MapContainer center={initialPosition} zoom={16} scrollWheelZoom={true} zoomControl={false}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          {/* Icono Zoom + / - */}
           <div className="leaflet-bottom leaflet-left">
             <div className="leaflet-control leaflet-bar leaflet-control-zoom">
               <a className="leaflet-control-zoom-in" href="#" title="Zoom in">+</a>
@@ -236,11 +234,10 @@ function Home() {
           )}
         </MapContainer>
 
-        {/* PANEL DERECHO DE INFORMACIÓN */}
+        {/* Panel lateral derecho */}
         {selectedSource && (
           <div className="source-panel">
             <button className="close-btn" onClick={() => setSelectedSource(null)}>✕</button>
-
             <div className="panel-header">
               <div className="panel-text">
                 <h2>{selectedSource.properties.nombre}</h2>
@@ -258,12 +255,12 @@ function Home() {
                 <p><small>Última actualización de estado</small></p>
                 <p><strong>10/10/2025</strong></p>
               </div>
-              <img 
-                src={selectedSource.properties.tipo === 'dogpark' 
-                  ? 'https://cdn-icons-png.flaticon.com/512/616/616408.png' 
-                  : fuentecillaImg} 
-                alt={selectedSource.properties.tipo === 'dogpark' ? "Parque de perros" : "Fuente"} 
-                className="panel-img" 
+              <img
+                src={selectedSource.properties.tipo === 'dogpark'
+                  ? 'https://cdn-icons-png.flaticon.com/512/616/616408.png'
+                  : fuentecillaImg}
+                alt={selectedSource.properties.tipo === 'dogpark' ? "Parque de perros" : "Fuente"}
+                className="panel-img"
               />
             </div>
             <ShowComments />

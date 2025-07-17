@@ -9,12 +9,10 @@ import {
 import nameIcon from "../assets/nameIcon.png";
 import emailIcon from "../assets/emailIcon.png";
 import passwordIcon from "../assets/passwordIcon.png";
-import { useAuth } from "./AuthContext";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
   const auth = getAuth(app);
-  const { login } = useAuth(); // ✅ Hook DENTRO del componente
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,10 +22,10 @@ export default function RegisterPage() {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       console.log("Usuario creado exitosamente.");
-      login(); // ✅ activa la sesión
-      navigate("/home");
+      navigate("/login"); // ✅ Redirige al login después de registrarse
     } catch (error) {
       console.log(error.message);
+      alert("Error al crear el usuario");
     }
   };
 
@@ -72,7 +70,7 @@ export default function RegisterPage() {
             <input type="password" placeholder="Repetir contraseña" />
           </div>
 
-          <button className="button-register-form" onClick={HandleSignUp}>
+          <button type="submit" className="button-register-form">
             Registrarse
           </button>
         </form>
