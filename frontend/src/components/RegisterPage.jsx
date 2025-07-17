@@ -72,7 +72,7 @@ export default function RegisterPage() {
             <input type="password" placeholder="Repetir contraseña" />
           </div>
 
-          <button type="submit" className="button-register-form">
+          <button className="button-register-form" onClick={HandleSignUp}>
             Registrarse
           </button>
         </form>
