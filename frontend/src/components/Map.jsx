@@ -10,18 +10,17 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 
 import PopUpLogin from './PopUpLogin';
-import LoginPage from './LoginPage'
-import RegisterPage from './RegisterPage';
 import SearchBar from "./SearchBar";
 import FilterDropdown from "./FilterDropdown";
-import userIcon from '../assets/userIcon.png';
 import ShowComments from './ShowComments';
 import './SourceInfoPanel.css';
 import fuentecillaImg from '../assets/fuentecilla.png';
+import ubiUsuarioImg from '../assets/icono-miUbicacion.png'
+import ubiFuenteImg from '../assets/icono-fuente.png'
+import ubiPerroImg from '../assets/icono-parqueCanino.png'
 
 import proj4 from "proj4";
 
@@ -106,19 +105,19 @@ function Home() {
 
   // Configuración de iconos de Leaflet
   const DefaultIcon = L.icon({
-    iconUrl: icon,
+    iconUrl: ubiFuenteImg,
     shadowUrl: iconShadow,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
+    iconSize: [38, 62],
+    iconAnchor: [18, 61],
     popupAnchor: [1, -34],
     shadowSize: [41, 41],
   });
   L.Marker.prototype.options.icon = DefaultIcon;
 
   const DogParkIcon = L.icon({
-    iconUrl: 'https://cdn-icons-png.flaticon.com/512/616/616408.png',
-    iconSize: [30, 30],
-    iconAnchor: [15, 30],
+    iconUrl: ubiPerroImg,
+    iconSize: [38, 62],
+    iconAnchor: [30, 60],
     popupAnchor: [1, -30],
     shadowUrl: iconShadow,
     shadowSize: [41, 41]
@@ -257,7 +256,7 @@ function Home() {
               </div>
               <img
                 src={selectedSource.properties.tipo === 'dogpark'
-                  ? 'https://cdn-icons-png.flaticon.com/512/616/616408.png'
+                  ? ubiPerroImg
                   : fuentecillaImg}
                 alt={selectedSource.properties.tipo === 'dogpark' ? "Parque de perros" : "Fuente"}
                 className="panel-img"

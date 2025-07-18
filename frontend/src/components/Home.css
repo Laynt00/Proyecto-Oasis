@@ -22,8 +22,8 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 220px;
-  padding-top: 300px;
+  padding: 270px 270px 200px 270px;
+  /* padding-top: 300px; */
   color: #000000;
 }
 
@@ -108,13 +108,12 @@
 /* Seccion Integrantes */
 .creators-div {
   width: 100vw;
-  height: 500px;
+  height: 800px;
   display: flex;
   background-image: url('../assets/creatorsBackground.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-attachment: fixed;
   align-items: center;
   justify-content: center;
   position: relative;
