@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function ShowComments() {
-    const url = "http://localhost:8080/api/comments";
+export default function ShowComments({ resourceId, resourceType }) {
+    const url = `http://localhost:8080/api/comments?resourceId=${resourceId}&resourceType=${resourceType}`;
     const [comments, setComments] = useState([]);
     const [user, setUser] = useState(1); // ID del usuario
     const [comment, setComment] = useState('');
 
     useEffect(() => {
         getComments();
-    }, []);
+    }, [resourceId, resourceType]); // Vuelve a cargar cuando cambia el recurso
 
     const getComments = async () => {
         try {
@@ -25,9 +25,10 @@ export default function ShowComments() {
         try {
             const response = await axios.post(url, {
                 user: { id: user },
-                text: comment
+                text: comment,
+                resourceId,
+                resourceType
             });
-            console.log("Comentario enviado:", response.data);
             setComments([...comments, response.data]);
             setComment("");
         } catch (error) {
@@ -46,16 +47,19 @@ export default function ShowComments() {
             />
             <button className="submit-comment-btn" onClick={handleCommentSubmit}>Comentar</button>
 
-            {/* Renderizado de comentarios */}
             {comments.map((comentario) => (
                 <div key={comentario.id} className="comentario">
                     <span>
                         <strong>{comentario.user?.name || 'Usuario anónimo'}</strong>
-                        • Hace un momento
+                        • {new Date(comentario.createdAt).toLocaleDateString()}
                     </span>
                     <p>{comentario.text}</p>
-                    <button className="edit-comment-btn">Editar</button>
-                    <button className="delete-comment-btn">Eliminar</button>
+                    {comentario.user?.id === user && (
+                        <>
+                            <button className="edit-comment-btn">Editar</button>
+                            <button className="delete-comment-btn">Eliminar</button>
+                        </>
+                    )}
                 </div>
             ))}
         </div>

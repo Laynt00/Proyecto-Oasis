@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/benches")
+@CrossOrigin(origins = "*") // Permite cualquier origen
 public class BenchController {
     private final BenchRepository benchRepository;
     private final CommentRepository commentRepository;
