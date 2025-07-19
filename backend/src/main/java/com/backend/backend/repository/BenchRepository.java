@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface BenchRepository extends JpaRepository<Bench, Long> {
     List<Bench> findByStatus(String status);
+
 }
