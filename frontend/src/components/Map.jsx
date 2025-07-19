@@ -164,6 +164,15 @@ function Home() {
     shadowSize: [41, 41]
   });
 
+  const BenchIcon = L.icon({
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/809/809052.png', // O usa tu propia imagen
+  iconSize: [38, 62],              // Mismo tamaño que los otros íconos
+  iconAnchor: [18, 61],            // Punto de anclaje
+  popupAnchor: [1, -34],           // Posición del popup
+  shadowUrl: iconShadow,           // Usa la misma sombra
+  shadowSize: [41, 41]             // Tamaño de la sombra
+});
+
 	const onEachFeature = (feature, layer) => {
 		if (feature.properties && feature.properties.nombre) {
 			const popupDiv = document.createElement("div");
