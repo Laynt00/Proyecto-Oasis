@@ -242,40 +242,6 @@ function Home() {
 			layer.bindPopup(popupDiv);
 		}
 	};
-	const handleFeatureClick = async (feature) => {
-		try {
-			let endpoint;
-			const resourceType = feature.properties.tipo || feature.properties.resource_type;
-
-			switch (resourceType) {
-				case 'DOG_PARK':
-					endpoint = `http://localhost:8080/api/dogparks/${feature.properties.id}`;
-					break;
-				case 'BENCH':
-					endpoint = `http://localhost:8080/api/benches/${feature.properties.id}`;
-					break;
-				case 'FONT':
-				default:
-					endpoint = `http://localhost:8080/api/fonts/${feature.properties.id}`;
-			}
-
-			const response = await fetch(endpoint);
-			const resourceData = await response.json();
-
-			setSelectedSource({
-				...resourceData,
-				geometry: feature.geometry,
-				properties: {
-					...feature.properties,
-					...resourceData,
-					tipo: resourceType.toLowerCase() // Normalizamos a minúsculas
-				}
-			});
-		} catch (error) {
-			console.error("Error fetching resource details:", error);
-		}
-	};
-
 
 	const pointToLayer = (feature, latlng) => {
 		if (feature.properties.tipo === 'dogpark') {
