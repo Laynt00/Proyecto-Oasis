@@ -193,18 +193,30 @@ function Home() {
 			}
 
 			popupDiv.innerHTML = `
-      <strong>${feature.properties.nombre}</strong><br/>
-      ${tipoTexto}
-      <button class="more-info-btn" style="
-        margin-top: 8px;
-        padding: 4px 8px;
-        background-color: ${colorBoton};
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      ">+info</button>
-    `;
+				<strong>${feature.properties.nombre}</strong><br/>
+				${tipoTexto}
+				<button class="more-info-btn" style="
+					margin-top: 8px;
+					padding: 4px 8px;
+					background-color: ${colorBoton};
+					color: white;
+					border: none;
+					border-radius: 4px;
+					cursor: pointer;
+				">+info</button>`;
+
+			    popupDiv.querySelector(".more-info-btn").addEventListener("click", () => {
+      				setSelectedSource(feature);
+    			});
+
+    			layer.bindPopup(popupDiv);
+
+				layer.on("click", () => {
+					const [lng, lat] = feature.geometry.coordinates;
+					setRouteTo({ lat, lng });
+					layer.openPopup();
+				});
+
 
 			// Solo manejar el clic en el botón, no en el marcador completo
 			popupDiv.querySelector(".more-info-btn").addEventListener("click", async (e) => {
