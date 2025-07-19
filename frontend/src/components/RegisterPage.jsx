@@ -24,10 +24,23 @@ export default function RegisterPage() {
   const HandleSignUp = async (e) => {
     e.preventDefault();
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      //Ahora tengo que hacer una llamada al backend para que guarde al user en la base de datos
+      await fetch("http://localhost:8080/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: user.email,
+          is_admin: false,
+          name: name
+        })
+      })
+
       console.log("Usuario creado exitosamente.");
       login(); // ✅ activa la sesión
-      navigate("/home");
+      navigate("/");
     } catch (error) {
       console.log(error.message);
     }
@@ -47,7 +60,7 @@ export default function RegisterPage() {
             <input 
               type="text" 
               value={name}
-              onChange={(e) =>setNombre(e.target.value)}
+              onChange={(e) =>setName(e.target.value)}
               placeholder="Nombre"
               required
               />
