@@ -1,4 +1,4 @@
-package com.backend.backend.util;
+package com.backend.backend;
 
 import com.backend.backend.model.Font;
 import com.backend.backend.repository.FontRepository;
