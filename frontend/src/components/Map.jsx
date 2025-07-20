@@ -16,7 +16,7 @@ import PopUpLogin from './PopUpLogin';
 import SearchBar from "./SearchBar";
 import FilterDropdown from "./FilterDropdown";
 import ShowComments from './ShowComments';
-import './SourceInfoPanel.css';
+import './ResourceInfoPanel.css';
 import fuentecillaImg from '../assets/fuentecilla.png';
 import ubiUsuarioImg from '../assets/icono-miUbicacion.png'
 import ubiFuenteImg from '../assets/icono-fuente.png'
@@ -42,6 +42,7 @@ function Home() {
 		try {
 			const response = await fetch("http://localhost:8080/api/fonts");
 			const data = await response.json();
+			console.log("Datos de fuentes:", data);
 			setFuentes(data);
 
 			const convertedFeatures = data.map((item) => {
@@ -49,12 +50,9 @@ function Home() {
 				return {
 					type: "Feature",
 					properties: {
-						nombre: item.name,
 						id: item.id,
-						tipo: item.resource_type || 'fuente',
-						status: item.status,
-						photo: item.photo,
-						comment_id: item.comment_id
+						name: item.name,
+						type: item.resource_type || 'fuente',
 					},
 					geometry: {
 						type: "Point",
@@ -62,6 +60,8 @@ function Home() {
 					}
 				};
 			});
+
+			console.log("Datos fuente tras conversion:", convertedFeatures)
 
 			setGeoJsonData({
 				type: "FeatureCollection",
@@ -84,9 +84,9 @@ function Home() {
 				return {
 					type: "Feature",
 					properties: {
-						nombre: item.nombre || "Parque de perros",
 						id: item.id,
-						tipo: 'dogpark'
+						name: item.name || "Parque de perros",
+						type: item.resource_type 
 					},
 					geometry: {
 						type: "Point",
@@ -109,7 +109,6 @@ function Home() {
 		try {
 			const response = await fetch("http://localhost:8080/api/benches");
 			const data = await response.json();
-			console.log("Datos de bancos:", data); // Para depuración
 			setBenches(data);
 
 			const convertedFeatures = data.map((item) => {
@@ -117,18 +116,16 @@ function Home() {
 				return {
 					type: "Feature",
 					properties: {
-						nombre: item.name || "Banco", // Usa item.name en lugar de item.nombre
+						name: item.name || "Banco", // Usa item.name en lugar de item.name
 						id: item.id,
-						tipo: 'bench', // Forzamos minúsculas para consistencia
-						status: item.status || 'OK', // Valor por defecto
-						photo: item.photo || 'https://cdn-icons-png.flaticon.com/512/809/809052.png' // Imagen por defecto
+						type: 'bench', // Forzamos minúsculas para consistencia
 					},
 					geometry: {
 						type: "Point",
 						coordinates: [lon, lat]
 					}
 				};
-			});
+			});		
 
 			setGeoJsonBenches({
 				type: "FeatureCollection",
@@ -175,26 +172,26 @@ function Home() {
 	});
 
 	const onEachFeature = (feature, layer) => {
-		if (feature.properties && feature.properties.nombre) {
+		if (feature.properties && feature.properties.name) {
 			const popupDiv = document.createElement("div");
-			const tipo = feature.properties.tipo;
-			const nombre = feature.properties.nombre;
+			const type = feature.properties.type;
+			const name = feature.properties.name;
 
 			let tipoTexto = '';
 			let colorBoton = '#4CAF50'; // Color por defecto (verde)
 
-			if (tipo === 'dog_park') {
+			if (type === 'dog_park') {
 				tipoTexto = '<em>Parque para perros</em><br/>';
 				colorBoton = '#FFA500';
-			} else if (tipo === 'bench') {
+			} else if (type === 'bench') {
 				tipoTexto = '<em>Banco público</em><br/>';
 				colorBoton = '#9C27B0';
-			} else if (tipo === 'font') {
+			} else if (type === 'font') {
 				tipoTexto = '<em>Fuente pública</em><br/>';
 			}
 
 			popupDiv.innerHTML = `
-      <strong>${feature.properties.nombre}</strong><br/>
+      <strong>${feature.properties.name}</strong><br/>
       ${tipoTexto}
       <button class="more-info-btn" style="
         margin-top: 8px;
@@ -207,12 +204,11 @@ function Home() {
       ">+info</button>
     `;
 
-			// Solo manejar el clic en el botón, no en el marcador completo
 			popupDiv.querySelector(".more-info-btn").addEventListener("click", async (e) => {
 				e.stopPropagation(); // Evita que el evento se propague
 				try {
 					let endpoint;
-					switch (feature.properties.tipo) {
+					switch (feature.properties.type) {
 						case 'dog_park':
 							endpoint = `http://localhost:8080/api/dogparks/${feature.properties.id}`;
 							break;
@@ -245,9 +241,9 @@ function Home() {
 	};
 
 	const pointToLayer = (feature, latlng) => {
-		if (feature.properties.tipo === 'dogpark') {
+		if (feature.properties.type === 'dogpark') {
 			return L.marker(latlng, { icon: DogParkIcon });
-		} else if (feature.properties.tipo === 'bench') {
+		} else if (feature.properties.type === 'bench') {
 			return L.marker(latlng, { icon: BenchIcon });
 		} else {
 			return L.marker(latlng, { icon: DefaultIcon });

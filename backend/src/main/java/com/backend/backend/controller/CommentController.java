@@ -3,6 +3,7 @@ package com.backend.backend.controller;
 import com.backend.backend.model.Comment;
 import com.backend.backend.repository.CommentRepository;
 import com.backend.backend.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -12,18 +13,9 @@ import java.util.List;
 @RequestMapping("/api/comments")
 @CrossOrigin(origins = "*") // Permite cualquier origen
 public class CommentController {
-    private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
+    @Autowired
+    private CommentRepository commentRepository;
 
-    public CommentController(CommentRepository commentRepository, UserRepository userRepository) {
-        this.commentRepository = commentRepository;
-        this.userRepository = userRepository;
-    }
-
-    @GetMapping
-    public ResponseEntity<List<Comment>> getAllComments() {
-        return ResponseEntity.ok(commentRepository.findAll());
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Comment> getCommentById(@PathVariable Long id) {
@@ -34,10 +26,6 @@ public class CommentController {
 
     @PostMapping
     public ResponseEntity<Comment> createComment(@RequestBody Comment comment) {
-        // Verificar que el usuario existe
-        if (!userRepository.existsById(comment.getUser().getId())) {
-            return ResponseEntity.badRequest().build();
-        }
         Comment savedComment = commentRepository.save(comment);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedComment);
     }

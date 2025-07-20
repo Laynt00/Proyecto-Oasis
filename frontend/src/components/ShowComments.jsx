@@ -1,67 +1,95 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import './ShowComments.css';
 
-export default function ShowComments({ resourceId, resourceType }) {
-    const url = `http://localhost:8080/api/comments?resourceId=${resourceId}&resourceType=${resourceType}`;
-    const [comments, setComments] = useState([]);
-    const [user, setUser] = useState(1); // ID del usuario
-    const [comment, setComment] = useState('');
+const ShowComments = ({ resourceId }) => {  // Eliminamos resourceType de los props
+  const [comments, setComments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [newComment, setNewComment] = useState('');
 
-    useEffect(() => {
-        getComments();
-    }, [resourceId, resourceType]); // Vuelve a cargar cuando cambia el recurso
-
-    const getComments = async () => {
-        try {
-            const response = await axios.get(url);
-            setComments(response.data);
-        } catch (error) {
-            console.error("Error fetching comments:", error);
+  useEffect(() => {
+    console.log(resourceId);
+    const fetchComments = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`http://localhost:8080/api/comments/${resourceId}`);
+        
+        if (!response.ok) {
+          throw new Error('Error al cargar comentarios');
         }
+        
+        const data = await response.json();
+        setComments(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    const handleCommentSubmit = async () => {
-        if (!comment.trim()) return;
-        try {
-            const response = await axios.post(url, {
-                user: { id: user },
-                text: comment,
-                resourceId,
-                resourceType
-            });
-            setComments([...comments, response.data]);
-            setComment("");
-        } catch (error) {
-            console.error("Error submitting comment:", error);
-        }
-    };
+    if (resourceId) {  // Solo verificamos resourceId ahora
+      fetchComments();
+    }
+  }, [resourceId]);  // Eliminamos resourceType de las dependencias
 
-    return (
-        <div className="comentarios">
-            <h3>Comentarios</h3>
-            <input
-                type="text"
-                placeholder="Deja tu comentario..."
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-            />
-            <button className="submit-comment-btn" onClick={handleCommentSubmit}>Comentar</button>
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
 
-            {comments.map((comentario) => (
-                <div key={comentario.id} className="comentario">
-                    <span>
-                        <strong>{comentario.user?.name || 'Usuario anónimo'}</strong>
-                        • {new Date(comentario.createdAt).toLocaleDateString()}
-                    </span>
-                    <p>{comentario.text}</p>
-                    {comentario.user?.id === user && (
-                        <>
-                            <button className="edit-comment-btn">Editar</button>
-                            <button className="delete-comment-btn">Eliminar</button>
-                        </>
-                    )}
-                </div>
-            ))}
-        </div>
-    );
-}
+    try {
+      const response = await fetch(`http://localhost:8080/api/comments/${resourceId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Aquí deberías incluir el token de autenticación si es necesario
+        },
+        body: JSON.stringify({ content: newComment })
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al enviar comentario');
+      }
+
+      const addedComment = await response.json();
+      setComments([...comments, addedComment]);
+      setNewComment('');
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  if (loading) return <div>Cargando comentarios...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  return (
+    <div className="comments-container">
+      <h3>Comentarios</h3>
+      
+      {comments.length === 0 ? (
+        <p>No hay comentarios aún. ¡Sé el primero en comentar!</p>
+      ) : (
+        <ul className="comments-list">
+          {comments.map((comment) => (
+            <li key={comment.id} className="comment-item">
+              <strong>{comment.user?.username || 'Anónimo'}</strong>
+              <p>{comment.content}</p>
+              <small>{new Date(comment.created_at).toLocaleString()}</small>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <form onSubmit={handleSubmit} className="comment-form">
+        <textarea
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          placeholder="Escribe tu comentario..."
+          required
+        />
+        <button type="submit">Enviar comentario</button>
+      </form>
+    </div>
+  );
+};
+
+export default ShowComments;

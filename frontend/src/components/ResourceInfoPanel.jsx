@@ -1,10 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ShowComments from './ShowComments';
-import './SourceInfoPanel.css'; // Asegúrate de que los estilos sigan aplicándose
+import './ResourceInfoPanel.css';
 
 const ResourceInfoPanel = ({ selectedSource, onClose }) => {
-  if (!selectedSource) return null;
+  const [resourceType, setResourceType] = useState('');
 
+  useEffect(() => {
+    if (selectedSource) {
+      // Determinar el tipo de recurso
+      const type = selectedSource.properties?.type || selectedSource.resource_type;
+      if (type === 'dog_park' || type === 'dogpark') {
+        setResourceType('dog_park');
+      } else if (type === 'bench') {
+        setResourceType('bench');
+      } else {
+        setResourceType('font');
+      }
+    }
+  }, [selectedSource]);
+
+  if (!selectedSource) return null;
+  
   return (
     <div className="source-panel">
       <button className="close-btn" onClick={onClose}>✕</button>
@@ -12,14 +28,14 @@ const ResourceInfoPanel = ({ selectedSource, onClose }) => {
         <div className="panel-text">
           <h2>{selectedSource.name || selectedSource.nombre || "Recurso"}</h2>
 
-          {selectedSource.properties?.tipo === 'dogpark' ? (
+          {resourceType === 'dog_park' ? (
             <>
               <p><strong>Parque para perros</strong></p>
               {selectedSource.photo && (
                 <img src={selectedSource.photo} alt="Foto del parque" className="panel-img" />
               )}
             </>
-          ) : selectedSource.properties?.tipo === 'bench' ? (
+          ) : resourceType === 'bench' ? (
             <>
               <p><strong>Banco público</strong></p>
               <p><strong>Estado:</strong>
@@ -48,18 +64,19 @@ const ResourceInfoPanel = ({ selectedSource, onClose }) => {
           <p><small>Coordenadas:</small></p>
           <p>
             <strong>
-              {selectedSource.geometry?.coordinates[0]?.toFixed(6) || selectedSource.coord_x},
-              {selectedSource.geometry?.coordinates[1]?.toFixed(6) || selectedSource.coord_y}
+              {selectedSource.geometry?.coordinates?.[0]?.toFixed(6) || selectedSource.coord_x},
+              {selectedSource.geometry?.coordinates?.[1]?.toFixed(6) || selectedSource.coord_y}
             </strong>
           </p>
         </div>
       </div>
-      <ShowComments
-        resourceId={selectedSource.id}
-        resourceType={selectedSource.properties?.tipo ||
-          (selectedSource instanceof DogPark ? 'dogpark' :
-            selectedSource instanceof Bench ? 'bench' : 'fuente')}
-      />
+
+      {/* Sección de comentarios */}
+      <div className="comments-section">
+        <ShowComments 
+          resourceId={selectedSource.id} 
+        />
+      </div>
     </div>
   );
 };
