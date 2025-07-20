@@ -21,6 +21,7 @@ import fuentecillaImg from '../assets/fuentecilla.png';
 import ubiUsuarioImg from '../assets/icono-miUbicacion.png'
 import ubiFuenteImg from '../assets/icono-fuente.png'
 import ubiPerroImg from '../assets/icono-parqueCanino.png'
+import ResourceInfoPanel from './ResourceInfoPanel';
 
 import proj4 from "proj4";
 
@@ -144,34 +145,34 @@ function Home() {
 		fetchBenchData();
 	}, []);
 
-  // Configuración de iconos de Leaflet
-  const DefaultIcon = L.icon({
-    iconUrl: ubiFuenteImg,
-    shadowUrl: iconShadow,
-    iconSize: [38, 62],
-    iconAnchor: [18, 61],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  });
-  L.Marker.prototype.options.icon = DefaultIcon;
+	// Configuración de iconos de Leaflet
+	const DefaultIcon = L.icon({
+		iconUrl: ubiFuenteImg,
+		shadowUrl: iconShadow,
+		iconSize: [38, 62],
+		iconAnchor: [18, 61],
+		popupAnchor: [1, -34],
+		shadowSize: [41, 41],
+	});
+	L.Marker.prototype.options.icon = DefaultIcon;
 
-  const DogParkIcon = L.icon({
-    iconUrl: ubiPerroImg,
-    iconSize: [38, 62],
-    iconAnchor: [30, 60],
-    popupAnchor: [1, -30],
-    shadowUrl: iconShadow,
-    shadowSize: [41, 41]
-  });
+	const DogParkIcon = L.icon({
+		iconUrl: ubiPerroImg,
+		iconSize: [38, 62],
+		iconAnchor: [30, 60],
+		popupAnchor: [1, -30],
+		shadowUrl: iconShadow,
+		shadowSize: [41, 41]
+	});
 
-  const BenchIcon = L.icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/809/809052.png', // O usa tu propia imagen
-  iconSize: [38, 62],              // Mismo tamaño que los otros íconos
-  iconAnchor: [18, 61],            // Punto de anclaje
-  popupAnchor: [1, -34],           // Posición del popup
-  shadowUrl: iconShadow,           // Usa la misma sombra
-  shadowSize: [41, 41]             // Tamaño de la sombra
-});
+	const BenchIcon = L.icon({
+		iconUrl: 'https://cdn-icons-png.flaticon.com/512/809/809052.png', // O usa tu propia imagen
+		iconSize: [38, 62],              // Mismo tamaño que los otros íconos
+		iconAnchor: [18, 61],            // Punto de anclaje
+		popupAnchor: [1, -34],           // Posición del popup
+		shadowUrl: iconShadow,           // Usa la misma sombra
+		shadowSize: [41, 41]             // Tamaño de la sombra
+	});
 
 	const onEachFeature = (feature, layer) => {
 		if (feature.properties && feature.properties.nombre) {
@@ -339,61 +340,10 @@ function Home() {
 
 				{/* Panel lateral derecho */}
 				{selectedSource && (
-					<div className="source-panel">
-						<button className="close-btn" onClick={() => setSelectedSource(null)}>✕</button>
-						<div className="panel-header">
-							<div className="panel-text">
-								<h2>{selectedSource.name || selectedSource.nombre || "Recurso"}</h2>
-
-								{selectedSource.properties?.tipo === 'dogpark' ? (
-									<>
-										<p><strong>Parque para perros</strong></p>
-										{selectedSource.photo && (
-											<img src={selectedSource.photo} alt="Foto del parque" className="panel-img" />
-										)}
-									</>
-								) : selectedSource.properties?.tipo === 'bench' ? (
-									<>
-										<p><strong>Banco público</strong></p>
-										<p><strong>Estado:</strong>
-											<span className={`estado-${selectedSource.status?.toLowerCase() || 'ok'}`}>
-												{selectedSource.status || 'OK'}
-											</span>
-										</p>
-										{selectedSource.photo && (
-											<img src={selectedSource.photo} alt="Foto del banco" className="panel-img" />
-										)}
-									</>
-								) : (
-									<>
-										<p><strong>Fuente</strong></p>
-										<p><strong>Estado:</strong>
-											<span className={`estado-${selectedSource.status?.toLowerCase() || 'ok'}`}>
-												{selectedSource.status || 'OK'}
-											</span>
-										</p>
-										{selectedSource.photo && (
-											<img src={selectedSource.photo} alt="Foto de la fuente" className="panel-img" />
-										)}
-									</>
-								)}
-
-								<p><small>Coordenadas:</small></p>
-								<p>
-									<strong>
-										{selectedSource.geometry?.coordinates[0]?.toFixed(6) || selectedSource.coord_x},
-										{selectedSource.geometry?.coordinates[1]?.toFixed(6) || selectedSource.coord_y}
-									</strong>
-								</p>
-							</div>
-						</div>
-						<ShowComments
-							resourceId={selectedSource.id}
-							resourceType={selectedSource.properties?.tipo ||
-								(selectedSource instanceof DogPark ? 'dogpark' :
-									selectedSource instanceof Bench ? 'bench' : 'fuente')}
-						/>
-					</div>
+					<ResourceInfoPanel
+						selectedSource={selectedSource}
+						onClose={() => setSelectedSource(null)}
+					/>
 				)}
 			</div>
 		</div>
