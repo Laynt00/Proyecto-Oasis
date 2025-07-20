@@ -35,7 +35,8 @@ function Home() {
 	const [geoJsonBenches, setGeoJsonBenches] = useState(null);
 	const [selectedSource, setSelectedSource] = useState(null);
 	const [showLoginPopup, setShowLoginPopup] = useState(false);
-
+	const [userPosition, setUserPosition] = useState(null);
+	const [routeGeoJson, setRouteGeoJson] = useState(null);
 
 	const fetchFontData = async () => {
 		try {
@@ -50,7 +51,7 @@ function Home() {
 					properties: {
 						nombre: item.name,
 						id: item.id,
-						tipo: item.resource_type || 'fuente',
+						tipo: 'font',
 						status: item.status,
 						photo: item.photo,
 						comment_id: item.comment_id
@@ -66,7 +67,6 @@ function Home() {
 				type: "FeatureCollection",
 				features: convertedFeatures
 			});
-
 		} catch (error) {
 			console.error("Error fetching fonts:", error);
 		}
@@ -98,7 +98,6 @@ function Home() {
 				type: "FeatureCollection",
 				features: convertedFeatures
 			});
-
 		} catch (error) {
 			console.error("Error fetching dog parks:", error);
 		}
@@ -108,7 +107,6 @@ function Home() {
 		try {
 			const response = await fetch("http://localhost:8080/api/benches");
 			const data = await response.json();
-			console.log("Datos de bancos:", data); // Para depuración
 			setBenches(data);
 
 			const convertedFeatures = data.map((item) => {
@@ -116,11 +114,11 @@ function Home() {
 				return {
 					type: "Feature",
 					properties: {
-						nombre: item.name || "Banco", // Usa item.name en lugar de item.nombre
+						nombre: item.name || "Banco",
 						id: item.id,
-						tipo: 'bench', // Forzamos minúsculas para consistencia
-						status: item.status || 'OK', // Valor por defecto
-						photo: item.photo || 'https://cdn-icons-png.flaticon.com/512/809/809052.png' // Imagen por defecto
+						tipo: 'bench',
+						status: item.status || 'OK',
+						photo: item.photo || 'https://cdn-icons-png.flaticon.com/512/809/809052.png'
 					},
 					geometry: {
 						type: "Point",
@@ -144,45 +142,68 @@ function Home() {
 		fetchBenchData();
 	}, []);
 
-  // Configuración de iconos de Leaflet
-  const DefaultIcon = L.icon({
-    iconUrl: ubiFuenteImg,
-    shadowUrl: iconShadow,
-    iconSize: [38, 62],
-    iconAnchor: [18, 61],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  });
-  L.Marker.prototype.options.icon = DefaultIcon;
+	useEffect(() => {
+		if (!selectedSource || !userPosition) return;
 
-  const DogParkIcon = L.icon({
-    iconUrl: ubiPerroImg,
-    iconSize: [38, 62],
-    iconAnchor: [30, 60],
-    popupAnchor: [1, -30],
-    shadowUrl: iconShadow,
-    shadowSize: [41, 41]
-  });
+		const fetchRoute = async () => {
+			const from = `${userPosition.lng},${userPosition.lat}`;
+			const to = `${selectedSource.geometry.coordinates[0]},${selectedSource.geometry.coordinates[1]}`;
+			try {
+				const res = await fetch(`https://router.project-osrm.org/route/v1/foot/${from};${to}?overview=full&geometries=geojson`);
+				const data = await res.json();
+				if (data.routes && data.routes.length > 0) {
+					setRouteGeoJson({
+						type: "Feature",
+						geometry: data.routes[0].geometry,
+						properties: {}
+					});
+				}
+			} catch (error) {
+				console.error("Error fetching route:", error);
+			}
+		};
 
-  const BenchIcon = L.icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/809/809052.png', // O usa tu propia imagen
-  iconSize: [38, 62],              // Mismo tamaño que los otros íconos
-  iconAnchor: [18, 61],            // Punto de anclaje
-  popupAnchor: [1, -34],           // Posición del popup
-  shadowUrl: iconShadow,           // Usa la misma sombra
-  shadowSize: [41, 41]             // Tamaño de la sombra
-});
+		fetchRoute();
+	}, [selectedSource, userPosition]);
+
+	const DefaultIcon = L.icon({
+		iconUrl: ubiFuenteImg,
+		shadowUrl: iconShadow,
+		iconSize: [38, 62],
+		iconAnchor: [18, 61],
+		popupAnchor: [1, -34],
+		shadowSize: [41, 41],
+	});
+	L.Marker.prototype.options.icon = DefaultIcon;
+
+	const DogParkIcon = L.icon({
+		iconUrl: ubiPerroImg,
+		iconSize: [38, 62],
+		iconAnchor: [30, 60],
+		popupAnchor: [1, -30],
+		shadowUrl: iconShadow,
+		shadowSize: [41, 41]
+	});
+
+	const BenchIcon = L.icon({
+		iconUrl: 'https://cdn-icons-png.flaticon.com/512/809/809052.png',
+		iconSize: [38, 62],
+		iconAnchor: [18, 61],
+		popupAnchor: [1, -34],
+		shadowUrl: iconShadow,
+		shadowSize: [41, 41]
+	});
 
 	const onEachFeature = (feature, layer) => {
 		if (feature.properties && feature.properties.nombre) {
 			const popupDiv = document.createElement("div");
 			const tipo = feature.properties.tipo;
-			const nombre = feature.properties.nombre;
 
 			let tipoTexto = '';
-			let colorBoton = '#4CAF50'; // Color por defecto (verde)
+			let colorBoton = '#4CAF50';
+			let colorRuta = '#06a4e2ff';
 
-			if (tipo === 'dog_park') {
+			if (tipo === 'dogpark') {
 				tipoTexto = '<em>Parque para perros</em><br/>';
 				colorBoton = '#FFA500';
 			} else if (tipo === 'bench') {
@@ -193,26 +214,37 @@ function Home() {
 			}
 
 			popupDiv.innerHTML = `
-      <strong>${feature.properties.nombre}</strong><br/>
-      ${tipoTexto}
-      <button class="more-info-btn" style="
-        margin-top: 8px;
-        padding: 4px 8px;
-        background-color: ${colorBoton};
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      ">+info</button>
-    `;
+			<strong>${feature.properties.nombre}</strong><br/>
+			${tipoTexto}
+			<div style="display: flex; gap: 8px; margin-top: 8px;">
+				<button class="more-info-btn" style="
+				padding: 4px 8px;
+				background-color: ${colorBoton};
+				color: white;
+				border: none;
+				border-radius: 4px;
+				cursor: pointer;
+				flex-shrink: 0;
+				">+info</button>
 
-			// Solo manejar el clic en el botón, no en el marcador completo
+				<button class="route-btn" style="
+				padding: 4px 8px;
+				background-color: ${colorRuta};
+				color: white;
+				border: none;
+				border-radius: 4px;
+				cursor: pointer;
+				flex-shrink: 0;
+				">Ruta</button>
+			</div>
+			`;
+
 			popupDiv.querySelector(".more-info-btn").addEventListener("click", async (e) => {
-				e.stopPropagation(); // Evita que el evento se propague
+				e.stopPropagation();
 				try {
 					let endpoint;
 					switch (feature.properties.tipo) {
-						case 'dog_park':
+						case 'dogpark':
 							endpoint = `http://localhost:8080/api/dogparks/${feature.properties.id}`;
 							break;
 						case 'bench':
@@ -261,6 +293,7 @@ function Home() {
 			},
 			locationfound(e) {
 				setPosition(e.latlng);
+				setUserPosition(e.latlng);
 				map.flyTo(e.latlng, map.getZoom());
 			},
 		});
@@ -294,9 +327,11 @@ function Home() {
 			)}
 
 			<div className="map-container" style={{ position: 'relative' }}>
-				{/* Overlay oscuro */}
 				{selectedSource && (
-					<div className="overlay" onClick={() => setSelectedSource(null)}></div>
+					<div className="overlay" onClick={() => {
+						setSelectedSource(null);
+						setRouteGeoJson(null);
+					}}></div>
 				)}
 
 				<MapContainer center={initialPosition} zoom={16} scrollWheelZoom={true} zoomControl={false}>
@@ -304,43 +339,27 @@ function Home() {
 						attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 						url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 					/>
-					<div className="leaflet-bottom leaflet-left">
-						<div className="leaflet-control leaflet-bar leaflet-control-zoom">
-							<a className="leaflet-control-zoom-in" href="#" title="Zoom in">+</a>
-							<a className="leaflet-control-zoom-out" href="#" title="Zoom out">−</a>
-						</div>
-					</div>
-					<Marker position={initialPosition}>
-						<Popup>Estás aquí</Popup>
-					</Marker>
 					<LocationMarker />
 					{geoJsonData && (
-						<GeoJSON
-							data={geoJsonData}
-							onEachFeature={onEachFeature}
-							pointToLayer={pointToLayer}
-						/>
+						<GeoJSON data={geoJsonData} onEachFeature={onEachFeature} pointToLayer={pointToLayer} />
 					)}
 					{geoJsonDogParks && (
-						<GeoJSON
-							data={geoJsonDogParks}
-							onEachFeature={onEachFeature}
-							pointToLayer={pointToLayer}
-						/>
+						<GeoJSON data={geoJsonDogParks} onEachFeature={onEachFeature} pointToLayer={pointToLayer} />
 					)}
 					{geoJsonBenches && (
-						<GeoJSON
-							data={geoJsonBenches}
-							onEachFeature={onEachFeature}
-							pointToLayer={pointToLayer}
-						/>
+						<GeoJSON data={geoJsonBenches} onEachFeature={onEachFeature} pointToLayer={pointToLayer} />
+					)}
+					{routeGeoJson && (
+						<GeoJSON data={routeGeoJson} style={{ color: 'blue', weight: 4 }} />
 					)}
 				</MapContainer>
 
-				{/* Panel lateral derecho */}
 				{selectedSource && (
 					<div className="source-panel">
-						<button className="close-btn" onClick={() => setSelectedSource(null)}>✕</button>
+						<button className="close-btn" onClick={() => {
+							setSelectedSource(null);
+							setRouteGeoJson(null);
+						}}>✕</button>
 						<div className="panel-header">
 							<div className="panel-text">
 								<h2>{selectedSource.name || selectedSource.nombre || "Recurso"}</h2>
@@ -389,9 +408,7 @@ function Home() {
 						</div>
 						<ShowComments
 							resourceId={selectedSource.id}
-							resourceType={selectedSource.properties?.tipo ||
-								(selectedSource instanceof DogPark ? 'dogpark' :
-									selectedSource instanceof Bench ? 'bench' : 'fuente')}
+							resourceType={selectedSource.properties?.tipo || 'fuente'}
 						/>
 					</div>
 				)}
