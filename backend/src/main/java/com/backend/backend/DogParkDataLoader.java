@@ -1,4 +1,4 @@
-package com.backend.backend.util;
+package com.backend.backend;
 
 import com.backend.backend.model.DogPark;
 import com.backend.backend.repository.DogParkRepository;
