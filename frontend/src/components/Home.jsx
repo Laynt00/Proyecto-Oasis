@@ -7,7 +7,8 @@ import banco1 from "../assets/carrusel-banco1.jpg";
 import banco2 from "../assets/carrusel-banco2.jpg";
 import parquecanino1 from "../assets/carrusel-parquecanino1.jpg";
 import parquecanino2 from "../assets/carrusel-parquecanino2.jpg";
-import creatorsBackground from "../assets/creatorsBackground.jpg"
+import creatorsBackground from "../assets/creatorsBackground.png"
+import fotogrupalOasis from "../assets/fotogrupalOasis.jpg"
 import logoReact from "../assets/oasis.png";
 
 function useDelayedCarousel(setIndexFn, delayStart, interval, imagesLength) {
@@ -95,8 +96,12 @@ export default function Home() {
         className="creators-div"
         style={{ backgroundImage: `url(${creatorsBackground})` }}
       >
-        <p>#WeAreOasis</p>
+        <div className="image-container">
+          <img src={fotogrupalOasis} alt="" className="fotogrupal" />
+          <p>#WeAreOasis</p>
+        </div>
       </div>
+
 
       <div className="logo-div">
         <svg width="200" height="200" className="curved-text">
