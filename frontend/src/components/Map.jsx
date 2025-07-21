@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "../App.css";
 import {
   MapContainer,
@@ -6,7 +6,8 @@ import {
   Marker,
   Popup,
   useMapEvents,
-  GeoJSON
+  GeoJSON,
+  useMap
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -18,23 +19,94 @@ import FilterDropdown from "./FilterDropdown";
 import ShowComments from './ShowComments';
 import './SourceInfoPanel.css';
 import fuentecillaImg from '../assets/fuentecilla.png';
+
+import RegistroPopup from './RegistroPopup';
+import Header from './Header';
 import ubiUsuarioImg from '../assets/icono-miUbicacion.png'
 import ubiFuenteImg from '../assets/icono-fuente.png'
 import ubiPerroImg from '../assets/icono-parqueCanino.png'
 
 import proj4 from "proj4";
-
 proj4.defs("EPSG:25830", "+proj=utm +zone=30 +ellps=GRS80 +units=m +no_defs");
+
+// ✅ COMPONENTE PARA HACER ZOOM AL MAPA
+function MapFlyTo({ lat, lon }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (lat && lon) {
+      map.flyTo([parseFloat(lat), parseFloat(lon)], 18);
+    }
+  }, [lat, lon, map]);
+
+  return null;
+}
 
 function Home() {
   const [resources, setResources] = useState([]);
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [selectedSource, setSelectedSource] = useState(null);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
+   const [showRegistroPopup, setShowRegistroPopup] = useState(false);
 
+  const mapRef = useRef(null);
+
+  // ✅ NUEVOS STATES PARA COORDENADAS A LAS QUE ZOOMEAR
+  const [flyToLat, setFlyToLat] = useState(null);
+  const [flyToLon, setFlyToLon] = useState(null);
+
+  const handleBuscarDireccion = async (direccion) => {
+    try {
+      console.log("Buscando:", direccion);
+
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(direccion)}`
+      );
+
+      const data = await response.json();
+      console.log("Respuesta de Nominatim:", data);
+
+      if (data.length > 0) {
+        const { lat, lon } = data[0];
+        setFlyToLat(lat); // 🔥 activa el flyTo
+        setFlyToLon(lon);
+      } else {
+        alert("Dirección no encontrada.");
+      }
+    } catch (error) {
+      console.error("Error buscando dirección:", error);
+      alert("Error durante la búsqueda.");
+    }
+  };
+
+  const handleSubmitRegistro = async (nuevoRegistro) => {
+    console.log("Nuevo registro:", nuevoRegistro);
+
+    const formData = new FormData();
+    formData.append("nombre", nuevoRegistro.nombre);
+    formData.append("estado", nuevoRegistro.estado);
+    formData.append("imagen", nuevoRegistro.imagen);
+
+    try {
+      const response = await fetch("http://localhost:8080/api/crear-registro", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al crear el registro");
+      }
+
+      alert("Registro creado exitosamente");
+    } catch (error) {
+      alert("Error al enviar el registro: " + error.message);
+    }
+
+    setShowRegistroPopup(false);
+  };
   const fetchResources = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/resources");
+      const response = await fetch("http://localhost:8080/api/fonts");
       const data = await response.json();
 
       const convertedFeatures = data.map((item) => {
@@ -201,17 +273,22 @@ function Home() {
 
   return (
     <div className="App">
+      <Header onCrearRegistro={() => setShowRegistroPopup(true)} />
+
       <div className="top-bar">
         <div className="filter-wrapper">
           <FilterDropdown onFilterChange={handleFilterChange} />
         </div>
         <div className="search-wrapper">
-          <SearchBar />
+          <SearchBar onSearch={handleBuscarDireccion} />
         </div>
       </div>
 
       {showLoginPopup && (
-        <PopUpLogin onClose={() => setShowLoginPopup(false)} />
+        <PopUpLogin 
+          onClose={() => setShowLoginPopup(false)} 
+          onCrearRegistro={() => setShowRegistroPopup(true)}
+        />
       )}
 
       <div className="map-container" style={{ position: 'relative' }}>
@@ -219,17 +296,21 @@ function Home() {
           <div className="overlay" onClick={() => setSelectedSource(null)}></div>
         )}
 
-        <MapContainer center={initialPosition} zoom={16} scrollWheelZoom={true} zoomControl={false}>
+        <MapContainer
+          center={initialPosition}
+          zoom={16}
+          scrollWheelZoom={true}
+          zoomControl={false}
+          whenCreated={(mapInstance) => (mapRef.current = mapInstance)}
+        >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution='&copy; OpenStreetMap contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <div className="leaflet-bottom leaflet-left">
-            <div className="leaflet-control leaflet-bar leaflet-control-zoom">
-              <a className="leaflet-control-zoom-in" href="#" title="Zoom in">+</a>
-              <a className="leaflet-control-zoom-out" href="#" title="Zoom out">−</a>
-            </div>
-          </div>
+
+          {/* 🔥 Este es el componente que hace el zoom dinámico */}
+          {flyToLat && flyToLon && <MapFlyTo lat={flyToLat} lon={flyToLon} />}
+
           <Marker position={initialPosition}>
             <Popup>Estás aquí</Popup>
           </Marker>
@@ -299,6 +380,14 @@ function Home() {
           </div>
         )}
       </div>
+
+      {showRegistroPopup && (
+        <RegistroPopup
+          isOpen={showRegistroPopup}
+          onClose={() => setShowRegistroPopup(false)}
+          onSubmit={handleSubmitRegistro}
+        />
+      )}
     </div>
   );
 }
