@@ -7,7 +7,8 @@ import {
   Popup,
   useMapEvents,
   GeoJSON,
-  useMap
+  useMap,
+  Polyline
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -50,19 +51,14 @@ function Home() {
   const [routeTarget, setRouteTarget] = useState(null); // Nuevo estado para el objetivo de ruta
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [showRegistroPopup, setShowRegistroPopup] = useState(false);
-<<<<<<< HEAD
   const [activeFilters, setActiveFilters] = useState([]);
-  const mapRef = useRef(null);
-  
-
-
-  // ✅ NUEVOS STATES PARA COORDENADAS A LAS QUE ZOOMEAR
-=======
   const [userPosition, setUserPosition] = useState(null);
   const [routeGeoJson, setRouteGeoJson] = useState(null);
-
+  const [routeCoordinates, setRouteCoordinates] = useState([]);
+  const [userLocation, setUserLocation] = useState(null);
   const mapRef = useRef(null);
->>>>>>> be8fcce2fdb59ef2d8deafa6414455cedcd9aef0
+
+  // ✅ NUEVOS STATES PARA COORDENADAS A LAS QUE ZOOMEAR
   const [flyToLat, setFlyToLat] = useState(null);
   const [flyToLon, setFlyToLon] = useState(null);
  
@@ -287,7 +283,6 @@ function Home() {
     }
   };
 
-<<<<<<< HEAD
   function LocationMarker({ setUserLocation }) {
   const [position, setPosition] = useState(null);
   const map = useMapEvents({
@@ -308,27 +303,6 @@ function Home() {
   );
 }
 
-=======
-  function LocationMarker() {
-    const [position, setPosition] = useState(null);
-    const map = useMapEvents({
-      click() {
-        map.locate();
-      },
-      locationfound(e) {
-        setPosition(e.latlng);
-        setUserPosition(e.latlng);
-        map.flyTo(e.latlng, map.getZoom());
-      },
-    });
-
-    return position === null ? null : (
-      <Marker position={position}>
-        <Popup>Estás aquí</Popup>
-      </Marker>
-    );
-  }
->>>>>>> be8fcce2fdb59ef2d8deafa6414455cedcd9aef0
 
   const initialPosition = [36.72, -4.42];
 
@@ -393,7 +367,6 @@ const filteredGeoJson = geoJsonData && {
           />
 
           {flyToLat && flyToLon && <MapFlyTo lat={flyToLat} lon={flyToLon} />}
-<<<<<<< HEAD
 
           <Marker position={initialPosition}>
             <Popup>Estás aquí</Popup>
@@ -404,9 +377,8 @@ const filteredGeoJson = geoJsonData && {
               key={JSON.stringify(activeFilters)} // fuerza rerender
               data={filteredGeoJson}
               onEachFeature={onEachFeature}
-              pointToLayer={pointToLayer}
-=======
-          <LocationMarker />
+              pointToLayer={pointToLayer} />
+          )}
           
           {geoJsonData && (
             <GeoJSON 
@@ -420,7 +392,6 @@ const filteredGeoJson = geoJsonData && {
             <GeoJSON 
               data={routeGeoJson} 
               style={{ color: 'blue', weight: 4 }} 
->>>>>>> be8fcce2fdb59ef2d8deafa6414455cedcd9aef0
             />
           )}
           
@@ -433,82 +404,10 @@ const filteredGeoJson = geoJsonData && {
         </MapContainer>
 
         {selectedSource && (
-<<<<<<< HEAD
-          <div className="source-panel">
-            <button className="close-btn" onClick={() => setSelectedSource(null)}>✕</button>
-            <div className="panel-header">
-              <div className="panel-text">
-                <h2>{selectedSource.name || selectedSource.nombre || "Recurso"}</h2>
-
-                {selectedSource.type === 'DOG_PARK' ? (
-                  <>
-                    <p><strong>Parque para perros</strong></p>
-                    {selectedSource.photo && (
-                      <img src={selectedSource.photo} alt="Foto del parque" className="panel-img" />
-                    )}
-                  </>
-                ) : selectedSource.type === 'BENCH' ? (
-                  <>
-                    <p><strong>Banco público</strong></p>
-                    <p><strong>Estado:</strong>
-                      <span className={`estado-${selectedSource.status?.toLowerCase() || 'ok'}`}>
-                        {selectedSource.status || 'OK'}
-                      </span>
-                    </p>
-                    {selectedSource.photo && (
-                      <img src={selectedSource.photo} alt="Foto del banco" className="panel-img" />
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <p><strong>Fuente</strong></p>
-                    <p><strong>Estado:</strong>
-                      <span className={`estado-${selectedSource.status?.toLowerCase() || 'ok'}`}>
-                        {selectedSource.status || 'OK'}
-                      </span>
-                    </p>
-                    {selectedSource.photo && (
-                      <img src={selectedSource.photo} alt="Foto de la fuente" className="panel-img" />
-                    )}
-                  </>
-                )}
-
-                <p><small>Coordenadas:</small></p>
-                <p>
-                  <strong>
-                    {selectedSource.geometry?.coordinates[0]?.toFixed(6) || selectedSource.coord_x},
-                    {selectedSource.geometry?.coordinates[1]?.toFixed(6) || selectedSource.coord_y}
-                  </strong>
-                </p>
-              </div>
-            </div>
-            <ShowComments
-              resourceId={selectedSource.id}
-              resourceType={selectedSource.type.toLowerCase()}
-            />
-            {/* ✅ BOTÓN DE RUTA AÑADIDO */}
-            <button
-              className="button-login-form"
-              style={{ marginTop: '1rem' }}
-              onClick={() => {
-                if (userLocation && selectedSource?.geometry?.coordinates) {
-                  const destino = {
-                    lat: selectedSource.geometry.coordinates[1],
-                    lng: selectedSource.geometry.coordinates[0]
-                  };
-                  setRouteCoordinates([userLocation, destino]);
-                }
-              }}
-            >
-              Ruta
-            </button>
-          </div>
-=======
           <ResourcePopup
             selectedSource={selectedSource}
             onClose={() => setSelectedSource(null)}
           />
->>>>>>> be8fcce2fdb59ef2d8deafa6414455cedcd9aef0
         )}
       </div>
 
