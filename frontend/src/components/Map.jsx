@@ -19,17 +19,18 @@ import FilterDropdown from "./FilterDropdown";
 import ShowComments from './ShowComments';
 import './SourceInfoPanel.css';
 import fuentecillaImg from '../assets/fuentecilla.png';
+import ResourcePopup from './ResourcePopup';
 
 import RegistroPopup from './RegistroPopup';
 import Header from './Header';
 import ubiUsuarioImg from '../assets/icono-miUbicacion.png'
 import ubiFuenteImg from '../assets/icono-fuente.png'
 import ubiPerroImg from '../assets/icono-parqueCanino.png'
+import ubiBancoImg from '../assets/icono-banco.png'
 
 import proj4 from "proj4";
 proj4.defs("EPSG:25830", "+proj=utm +zone=30 +ellps=GRS80 +units=m +no_defs");
 
-// ✅ COMPONENTE PARA HACER ZOOM AL MAPA
 function MapFlyTo({ lat, lon }) {
   const map = useMap();
 
@@ -46,31 +47,34 @@ function Home() {
   const [resources, setResources] = useState([]);
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [selectedSource, setSelectedSource] = useState(null);
+  const [routeTarget, setRouteTarget] = useState(null); // Nuevo estado para el objetivo de ruta
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [showRegistroPopup, setShowRegistroPopup] = useState(false);
+<<<<<<< HEAD
   const [activeFilters, setActiveFilters] = useState([]);
   const mapRef = useRef(null);
   
 
 
   // ✅ NUEVOS STATES PARA COORDENADAS A LAS QUE ZOOMEAR
+=======
+  const [userPosition, setUserPosition] = useState(null);
+  const [routeGeoJson, setRouteGeoJson] = useState(null);
+
+  const mapRef = useRef(null);
+>>>>>>> be8fcce2fdb59ef2d8deafa6414455cedcd9aef0
   const [flyToLat, setFlyToLat] = useState(null);
   const [flyToLon, setFlyToLon] = useState(null);
  
   const handleBuscarDireccion = async (direccion) => {
     try {
-      console.log("Buscando:", direccion);
-
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(direccion)}`
       );
-
       const data = await response.json();
-      console.log("Respuesta de Nominatim:", data);
-
       if (data.length > 0) {
         const { lat, lon } = data[0];
-        setFlyToLat(lat); // 🔥 activa el flyTo
+        setFlyToLat(lat);
         setFlyToLon(lon);
       } else {
         alert("Dirección no encontrada.");
@@ -82,8 +86,6 @@ function Home() {
   };
 
   const handleSubmitRegistro = async (nuevoRegistro) => {
-    console.log("Nuevo registro:", nuevoRegistro);
-
     const formData = new FormData();
     formData.append("nombre", nuevoRegistro.nombre);
     formData.append("estado", nuevoRegistro.estado);
@@ -94,18 +96,14 @@ function Home() {
         method: "POST",
         body: formData,
       });
-
-      if (!response.ok) {
-        throw new Error("Error al crear el registro");
-      }
-
+      if (!response.ok) throw new Error("Error al crear el registro");
       alert("Registro creado exitosamente");
     } catch (error) {
       alert("Error al enviar el registro: " + error.message);
     }
-
     setShowRegistroPopup(false);
   };
+
   const fetchResources = async () => {
     try {
       const response = await fetch("http://localhost:8080/api/resources");
@@ -118,7 +116,7 @@ function Home() {
           properties: {
             nombre: item.name,
             id: item.id,
-            tipo: item.type ? item.type.toLowerCase() : 'desconocido', // Convertimos a minúsculas para consistencia
+            tipo: item.type ? item.type.toLowerCase() : 'desconocido',
             status: item.status || 'OK',
             photo: item.photo || '',
             comment_id: item.comment_id
@@ -134,7 +132,6 @@ function Home() {
         type: "FeatureCollection",
         features: convertedFeatures
       });
-
     } catch (error) {
       console.error("Error fetching resources:", error);
     }
@@ -144,8 +141,33 @@ function Home() {
     fetchResources();
   }, []);
 
-  // Configuración de iconos de Leaflet
-  const DefaultIcon = L.icon({
+  // Efecto para calcular rutas - ahora depende de routeTarget
+  useEffect(() => {
+    if (!routeTarget || !userPosition) return;
+
+    const fetchRoute = async () => {
+      const from = `${userPosition.lng},${userPosition.lat}`;
+      const to = `${routeTarget.geometry.coordinates[0]},${routeTarget.geometry.coordinates[1]}`;
+      try {
+        const res = await fetch(`https://router.project-osrm.org/route/v1/foot/${from};${to}?overview=full&geometries=geojson`);
+        const data = await res.json();
+        if (data.routes && data.routes.length > 0) {
+          setRouteGeoJson({
+            type: "Feature",
+            geometry: data.routes[0].geometry,
+            properties: {}
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching route:", error);
+      }
+    };
+
+    fetchRoute();
+  }, [routeTarget, userPosition]);
+
+  // Configuración de iconos
+  const UserIcon = L.icon({
     iconUrl: ubiUsuarioImg,
     shadowUrl: iconShadow,
     iconSize: [38, 62],
@@ -153,7 +175,7 @@ function Home() {
     popupAnchor: [1, -34],
     shadowSize: [41, 41],
   });
-  L.Marker.prototype.options.icon = DefaultIcon;
+  L.Marker.prototype.options.icon = UserIcon;
 
   const FontIcon = L.icon({
     iconUrl: ubiFuenteImg,
@@ -174,7 +196,7 @@ function Home() {
   });
 
   const BenchIcon = L.icon({
-    iconUrl: 'https://cdn-icons-png.flaticon.com/512/809/809052.png',
+    iconUrl: ubiBancoImg,
     iconSize: [38, 62],
     iconAnchor: [18, 61],
     popupAnchor: [1, -34],
@@ -186,12 +208,12 @@ function Home() {
     if (feature.properties && feature.properties.nombre) {
       const popupDiv = document.createElement("div");
       const tipo = feature.properties.tipo;
-      const nombre = feature.properties.nombre;
 
       let tipoTexto = '';
-      let colorBoton = '#4CAF50'; // Color por defecto (verde)
+      let colorBoton = '#4CAF50';
+      let colorRuta = '#06a4e2ff';
 
-      if (tipo === 'dog_park') {
+      if (tipo === 'dogpark') {
         tipoTexto = '<em>Parque para perros</em><br/>';
         colorBoton = '#FFA500';
       } else if (tipo === 'bench') {
@@ -204,23 +226,34 @@ function Home() {
       popupDiv.innerHTML = `
         <strong>${feature.properties.nombre}</strong><br/>
         ${tipoTexto}
-        <button class="more-info-btn" style="
-          margin-top: 8px;
-          padding: 4px 8px;
-          background-color: ${colorBoton};
-          color: white;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-        ">+info</button>
+        <div style="display: flex; gap: 8px; margin-top: 8px;">
+          <button class="more-info-btn" style="
+            padding: 4px 8px;
+            background-color: ${colorBoton};
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            flex-shrink: 0;
+          ">+info</button>
+          <button class="route-btn" style="
+            padding: 4px 8px;
+            background-color: ${colorRuta};
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            flex-shrink: 0;
+          ">Ruta</button>
+        </div>
       `;
 
+      // Manejador para el botón +info
       popupDiv.querySelector(".more-info-btn").addEventListener("click", async (e) => {
         e.stopPropagation();
         try {
           const response = await fetch(`http://localhost:8080/api/resources/${feature.properties.id}`);
           const resourceData = await response.json();
-
           setSelectedSource({
             ...resourceData,
             geometry: feature.geometry,
@@ -234,20 +267,27 @@ function Home() {
         }
       });
 
+      // Manejador para el botón Ruta - ¡ESTA ES LA PARTE CLAVE!
+      popupDiv.querySelector(".route-btn").addEventListener("click", (e) => {
+        e.stopPropagation();
+        setRouteTarget(feature); // Establecer este recurso como objetivo de ruta
+      });
+
       layer.bindPopup(popupDiv);
     }
   };
 
-	const pointToLayer = (feature, latlng) => {
-		if (feature.properties.tipo === 'dog_park') {
-			return L.marker(latlng, { icon: DogParkIcon });
-		} else if (feature.properties.tipo === 'bench') {
-			return L.marker(latlng, { icon: BenchIcon });
-		} else {
-			return L.marker(latlng, { icon: FontIcon });
-		}
-	};
+  const pointToLayer = (feature, latlng) => {
+    if (feature.properties.tipo === 'dog_park') {
+      return L.marker(latlng, { icon: DogParkIcon });
+    } else if (feature.properties.tipo === 'bench') {
+      return L.marker(latlng, { icon: BenchIcon });
+    } else {
+      return L.marker(latlng, { icon: FontIcon });
+    }
+  };
 
+<<<<<<< HEAD
   function LocationMarker({ setUserLocation }) {
   const [position, setPosition] = useState(null);
   const map = useMapEvents({
@@ -268,6 +308,27 @@ function Home() {
   );
 }
 
+=======
+  function LocationMarker() {
+    const [position, setPosition] = useState(null);
+    const map = useMapEvents({
+      click() {
+        map.locate();
+      },
+      locationfound(e) {
+        setPosition(e.latlng);
+        setUserPosition(e.latlng);
+        map.flyTo(e.latlng, map.getZoom());
+      },
+    });
+
+    return position === null ? null : (
+      <Marker position={position}>
+        <Popup>Estás aquí</Popup>
+      </Marker>
+    );
+  }
+>>>>>>> be8fcce2fdb59ef2d8deafa6414455cedcd9aef0
 
   const initialPosition = [36.72, -4.42];
 
@@ -304,15 +365,19 @@ const filteredGeoJson = geoJsonData && {
       </div>
 
       {showLoginPopup && (
-        <PopUpLogin 
-          onClose={() => setShowLoginPopup(false)} 
+        <PopUpLogin
+          onClose={() => setShowLoginPopup(false)}
           onCrearRegistro={() => setShowRegistroPopup(true)}
         />
       )}
 
       <div className="map-container" style={{ position: 'relative' }}>
-        {selectedSource && (
-          <div className="overlay" onClick={() => setSelectedSource(null)}></div>
+        {(selectedSource || routeGeoJson) && (
+          <div className="overlay" onClick={() => {
+            setSelectedSource(null);
+            setRouteTarget(null); // Limpiar objetivo de ruta
+            setRouteGeoJson(null); // Limpiar ruta mostrada
+          }}></div>
         )}
 
         <MapContainer
@@ -327,8 +392,8 @@ const filteredGeoJson = geoJsonData && {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
-          {/* 🔥 Este es el componente que hace el zoom dinámico */}
           {flyToLat && flyToLon && <MapFlyTo lat={flyToLat} lon={flyToLon} />}
+<<<<<<< HEAD
 
           <Marker position={initialPosition}>
             <Popup>Estás aquí</Popup>
@@ -340,6 +405,22 @@ const filteredGeoJson = geoJsonData && {
               data={filteredGeoJson}
               onEachFeature={onEachFeature}
               pointToLayer={pointToLayer}
+=======
+          <LocationMarker />
+          
+          {geoJsonData && (
+            <GeoJSON 
+              data={geoJsonData} 
+              onEachFeature={onEachFeature} 
+              pointToLayer={pointToLayer} 
+            />
+          )}
+          
+          {routeGeoJson && (
+            <GeoJSON 
+              data={routeGeoJson} 
+              style={{ color: 'blue', weight: 4 }} 
+>>>>>>> be8fcce2fdb59ef2d8deafa6414455cedcd9aef0
             />
           )}
           
@@ -352,6 +433,7 @@ const filteredGeoJson = geoJsonData && {
         </MapContainer>
 
         {selectedSource && (
+<<<<<<< HEAD
           <div className="source-panel">
             <button className="close-btn" onClick={() => setSelectedSource(null)}>✕</button>
             <div className="panel-header">
@@ -421,6 +503,12 @@ const filteredGeoJson = geoJsonData && {
               Ruta
             </button>
           </div>
+=======
+          <ResourcePopup
+            selectedSource={selectedSource}
+            onClose={() => setSelectedSource(null)}
+          />
+>>>>>>> be8fcce2fdb59ef2d8deafa6414455cedcd9aef0
         )}
       </div>
 
