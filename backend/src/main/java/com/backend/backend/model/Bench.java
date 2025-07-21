@@ -13,8 +13,8 @@ public class Bench extends Resource {
     // Constructores
     public Bench() {}
 
-    public Bench(String name, Comment comment, Float coord_x, Float coord_y, String status, String photo) {
-        super(name, comment, coord_x, coord_y);
+    public Bench(String name, Comment comment, Float coord_x, Float coord_y, String status, String photo, ResourceType type) {
+        super(name, comment, coord_x, coord_y, type);
         this.status = status;
         this.photo = photo;
     }

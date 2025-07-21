@@ -29,11 +29,12 @@ public abstract class Resource {
     // Constructores, getters y setters
     public Resource() {}
 
-    public Resource(String name, Comment comment, Float coord_x, Float coord_y) {
+    public Resource(String name, Comment comment, Float coord_x, Float coord_y, ResourceType type) {
         this.name = name;
         this.comment = comment; // Requiere un objeto Comment
         this.coord_x = coord_x;
         this.coord_y = coord_y;
+        this.type = type;
     }
 
     // Getters y setters
@@ -75,5 +76,13 @@ public abstract class Resource {
 
     public void setCoord_y(Float coord_y) {
         this.coord_y = coord_y;
+    }
+
+    public ResourceType getType() {
+        return type;
+    }
+
+    public void setType(ResourceType type) {
+        this.type = type;
     }
 }
