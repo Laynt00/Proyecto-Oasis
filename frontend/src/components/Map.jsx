@@ -146,7 +146,7 @@ function Home() {
 
   // Configuración de iconos de Leaflet
   const DefaultIcon = L.icon({
-    iconUrl: ubiFuenteImg,
+    iconUrl: ubiUsuarioImg,
     shadowUrl: iconShadow,
     iconSize: [38, 62],
     iconAnchor: [18, 61],
@@ -154,6 +154,15 @@ function Home() {
     shadowSize: [41, 41],
   });
   L.Marker.prototype.options.icon = DefaultIcon;
+
+  const FontIcon = L.icon({
+    iconUrl: ubiFuenteImg,
+    shadowUrl: iconShadow,
+    iconSize: [38, 62],
+    iconAnchor: [18, 61],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  });
 
   const DogParkIcon = L.icon({
     iconUrl: ubiPerroImg,
@@ -249,7 +258,7 @@ function Home() {
 		} else if (feature.properties.tipo === 'bench') {
 			return L.marker(latlng, { icon: BenchIcon });
 		} else {
-			return L.marker(latlng, { icon: DefaultIcon });
+			return L.marker(latlng, { icon: FontIcon });
 		}
 	};
 
