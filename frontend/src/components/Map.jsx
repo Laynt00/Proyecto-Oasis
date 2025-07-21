@@ -47,8 +47,8 @@ function Home() {
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [selectedSource, setSelectedSource] = useState(null);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
-   const [showRegistroPopup, setShowRegistroPopup] = useState(false);
-
+  const [showRegistroPopup, setShowRegistroPopup] = useState(false);
+  const [activeFilters, setActiveFilters] = useState([]);
   const mapRef = useRef(null);
 
   // ✅ NUEVOS STATES PARA COORDENADAS A LAS QUE ZOOMEAR
@@ -268,8 +268,23 @@ function Home() {
   const initialPosition = [36.72, -4.42];
 
   const handleFilterChange = (filters) => {
-    console.log("Filtros seleccionados:", filters);
+    setActiveFilters(filters);
   };
+
+  console.log("Filtros activos en render:", activeFilters);
+
+  if (geoJsonData) {
+  const tiposUnicos = new Set(geoJsonData.features.map(f => f.properties.tipo));
+  console.log("Tipos detectados en features:", Array.from(tiposUnicos));
+}
+
+const filteredGeoJson = geoJsonData && {
+  ...geoJsonData,
+  features: geoJsonData.features.filter(feature =>
+    activeFilters.length === 0 || activeFilters.includes(feature.properties.tipo)
+  )
+};
+
 
   return (
     <div className="App">
@@ -315,13 +330,15 @@ function Home() {
             <Popup>Estás aquí</Popup>
           </Marker>
           <LocationMarker />
-          {geoJsonData && (
+          {filteredGeoJson && (
             <GeoJSON
-              data={geoJsonData}
+              key={JSON.stringify(activeFilters)} // fuerza rerender
+              data={filteredGeoJson}
               onEachFeature={onEachFeature}
               pointToLayer={pointToLayer}
             />
           )}
+
         </MapContainer>
 
         {selectedSource && (
