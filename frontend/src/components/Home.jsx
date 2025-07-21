@@ -39,6 +39,22 @@ export default function Home() {
   useDelayedCarousel(setIndex2, 3000, 9000, imagesSetBanco.length);
   useDelayedCarousel(setIndex3, 6000, 9000, imagesSetParqueCanino.length);
 
+  // 👇 Popup añadido
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [nombre, setNombre] = useState('');
+  const [estado, setEstado] = useState('ok');
+  const [imagen, setImagen] = useState(null);
+
+  const handleImageChange = (e) => {
+    setImagen(e.target.files[0]);
+  };
+
+  const handleCrearRegistro = () => {
+    const nuevoRegistro = { nombre, estado, imagen };
+    console.log("Nuevo registro:", nuevoRegistro);
+    setPopupVisible(false);
+  };
+
   return (
     <div className="home-page-content">
       <div className="about-us-div">
@@ -121,7 +137,6 @@ export default function Home() {
           style={{ cursor: "pointer" }}
         />
       </div>
-
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "../App.css";
 import {
   MapContainer,
@@ -6,26 +6,38 @@ import {
   Marker,
   Popup,
   useMapEvents,
-  GeoJSON
+  GeoJSON,
+  useMap
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 
-import PopUpLogin from './PopUpLogin';
-import LoginPage from './LoginPage'
-import RegisterPage from './RegisterPage';
 import SearchBar from "./SearchBar";
 import FilterDropdown from "./FilterDropdown";
-import userIcon from '../assets/userIcon.png';
 import ShowComments from './ShowComments';
 import './SourceInfoPanel.css';
 import fuentecillaImg from '../assets/fuentecilla.png';
 
-import proj4 from "proj4";
+import RegistroPopup from './RegistroPopup';
+import Header from './Header';
 
+import proj4 from "proj4";
 proj4.defs("EPSG:25830", "+proj=utm +zone=30 +ellps=GRS80 +units=m +no_defs");
+
+// ✅ COMPONENTE PARA HACER ZOOM AL MAPA
+function MapFlyTo({ lat, lon }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (lat && lon) {
+      map.flyTo([parseFloat(lat), parseFloat(lon)], 18);
+    }
+  }, [lat, lon, map]);
+
+  return null;
+}
 
 function Home() {
   const [fuentes, setFuentes] = useState([]);
@@ -34,6 +46,68 @@ function Home() {
   const [geoJsonDogParks, setGeoJsonDogParks] = useState(null);
   const [selectedSource, setSelectedSource] = useState(null);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [showRegistroPopup, setShowRegistroPopup] = useState(false);
+
+  const mapRef = useRef(null);
+
+  // ✅ NUEVOS STATES PARA COORDENADAS A LAS QUE ZOOMEAR
+  const [flyToLat, setFlyToLat] = useState(null);
+  const [flyToLon, setFlyToLon] = useState(null);
+
+  const handleBuscarDireccion = async (direccion) => {
+    try {
+      console.log("Buscando:", direccion);
+
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(direccion)}`
+      );
+
+      const data = await response.json();
+      console.log("Respuesta de Nominatim:", data);
+
+      if (data.length > 0) {
+        const { lat, lon } = data[0];
+        setFlyToLat(lat); // 🔥 activa el flyTo
+        setFlyToLon(lon);
+      } else {
+        alert("Dirección no encontrada.");
+      }
+    } catch (error) {
+      console.error("Error buscando dirección:", error);
+      alert("Error durante la búsqueda.");
+    }
+  };
+
+  const handleSubmitRegistro = async (nuevoRegistro) => {
+    console.log("Nuevo registro:", nuevoRegistro);
+
+    const formData = new FormData();
+    formData.append("nombre", nuevoRegistro.nombre);
+    formData.append("estado", nuevoRegistro.estado);
+    formData.append("imagen", nuevoRegistro.imagen);
+
+    try {
+      const response = await fetch("http://localhost:8080/api/crear-registro", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al crear el registro");
+      }
+
+      alert("Registro creado exitosamente");
+    } catch (error) {
+      alert("Error al enviar el registro: " + error.message);
+    }
+
+    setShowRegistroPopup(false);
+  };
+
+  useEffect(() => {
+    fetchFontData();
+    fetchDogParkData();
+  }, []);
 
   const fetchFontData = async () => {
     try {
@@ -99,12 +173,6 @@ function Home() {
     }
   };
 
-  useEffect(() => {
-    fetchFontData();
-    fetchDogParkData();
-  }, []);
-
-  // Configuración de iconos de Leaflet
   const DefaultIcon = L.icon({
     iconUrl: icon,
     shadowUrl: iconShadow,
@@ -128,7 +196,7 @@ function Home() {
     if (feature.properties && feature.properties.nombre) {
       const popupDiv = document.createElement("div");
       const isDogPark = feature.properties.tipo === 'dogpark';
-      
+
       popupDiv.innerHTML = `
         <strong>${feature.properties.nombre}</strong><br/>
         ${isDogPark ? '<em>Parque para perros</em><br/>' : ''}
@@ -142,7 +210,7 @@ function Home() {
           cursor: pointer;
         ">+info</button>
       `;
-      
+
       popupDiv.querySelector(".more-info-btn").addEventListener("click", () => {
         setSelectedSource(feature);
       });
@@ -152,7 +220,7 @@ function Home() {
   };
 
   const pointToLayer = (feature, latlng) => {
-    return feature.properties.tipo === 'dogpark' 
+    return feature.properties.tipo === 'dogpark'
       ? L.marker(latlng, { icon: DogParkIcon })
       : L.marker(latlng, { icon: DefaultIcon });
   };
@@ -184,36 +252,44 @@ function Home() {
 
   return (
     <div className="App">
+      <Header onCrearRegistro={() => setShowRegistroPopup(true)} />
+
       <div className="top-bar">
         <div className="filter-wrapper">
           <FilterDropdown onFilterChange={handleFilterChange} />
         </div>
         <div className="search-wrapper">
-          <SearchBar />
+          <SearchBar onSearch={handleBuscarDireccion} />
         </div>
       </div>
 
       {showLoginPopup && (
-        <PopUpLogin onClose={() => setShowLoginPopup(false)} />
+        <PopUpLogin 
+          onClose={() => setShowLoginPopup(false)} 
+          onCrearRegistro={() => setShowRegistroPopup(true)}
+        />
       )}
 
       <div className="map-container" style={{ position: 'relative' }}>
-        {/* Overlay oscuro */}
         {selectedSource && (
           <div className="overlay" onClick={() => setSelectedSource(null)}></div>
         )}
 
-        <MapContainer center={initialPosition} zoom={16} scrollWheelZoom={true} zoomControl={false}>
+        <MapContainer
+          center={initialPosition}
+          zoom={16}
+          scrollWheelZoom={true}
+          zoomControl={false}
+          whenCreated={(mapInstance) => (mapRef.current = mapInstance)}
+        >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution='&copy; OpenStreetMap contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <div className="leaflet-bottom leaflet-left">
-            <div className="leaflet-control leaflet-bar leaflet-control-zoom">
-              <a className="leaflet-control-zoom-in" href="#" title="Zoom in">+</a>
-              <a className="leaflet-control-zoom-out" href="#" title="Zoom out">−</a>
-            </div>
-          </div>
+
+          {/* 🔥 Este es el componente que hace el zoom dinámico */}
+          {flyToLat && flyToLon && <MapFlyTo lat={flyToLat} lon={flyToLon} />}
+
           <Marker position={initialPosition}>
             <Popup>Estás aquí</Popup>
           </Marker>
@@ -233,40 +309,15 @@ function Home() {
             />
           )}
         </MapContainer>
-
-        {/* Panel lateral derecho */}
-        {selectedSource && (
-          <div className="source-panel">
-            <button className="close-btn" onClick={() => setSelectedSource(null)}>✕</button>
-            <div className="panel-header">
-              <div className="panel-text">
-                <h2>{selectedSource.properties.nombre}</h2>
-                {selectedSource.properties.tipo === 'dogpark' ? (
-                  <>
-                    <p><strong>Parque para perros</strong></p>
-                    <p><strong>Estado:</strong> <span className="estado-ok">Abierto</span></p>
-                  </>
-                ) : (
-                  <>
-                    <p><strong>Calle:</strong> {selectedSource.properties.calle || "Nombre de calle"}</p>
-                    <p><strong>Estado:</strong> <span className="estado-ok">OK</span></p>
-                  </>
-                )}
-                <p><small>Última actualización de estado</small></p>
-                <p><strong>10/10/2025</strong></p>
-              </div>
-              <img
-                src={selectedSource.properties.tipo === 'dogpark'
-                  ? 'https://cdn-icons-png.flaticon.com/512/616/616408.png'
-                  : fuentecillaImg}
-                alt={selectedSource.properties.tipo === 'dogpark' ? "Parque de perros" : "Fuente"}
-                className="panel-img"
-              />
-            </div>
-            <ShowComments />
-          </div>
-        )}
       </div>
+
+      {showRegistroPopup && (
+        <RegistroPopup
+          isOpen={showRegistroPopup}
+          onClose={() => setShowRegistroPopup(false)}
+          onSubmit={handleSubmitRegistro}
+        />
+      )}
     </div>
   );
 }

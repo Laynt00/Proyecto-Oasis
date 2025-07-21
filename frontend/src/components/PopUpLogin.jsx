@@ -4,10 +4,10 @@ import { useAuth } from "./AuthContext";
 
 import userIcon from "../assets/userIcon.png";
 
-export default function PopUpLogin({ onClose }) {
+export default function PopUpLogin({ onClose, onCrearRegistro }) {
   const popupRef = useRef(null);
   const navigate = useNavigate();
-  const { iniciada, logout } = useAuth();
+  const { iniciada, logout, user } = useAuth();
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -24,7 +24,9 @@ export default function PopUpLogin({ onClose }) {
       <figure className="user-appearance">
         <img src={userIcon} className="userIcon" />
         <figcaption>
-          {iniciada ? "USUARIO REGISTRADO" : "USUARIO NO REGISTRADO"}
+          {iniciada
+            ? user?.displayName || "USUARIO REGISTRADO"
+            : "USUARIO NO REGISTRADO"}
         </figcaption>
       </figure>
 
@@ -34,7 +36,7 @@ export default function PopUpLogin({ onClose }) {
             <p>¿Quieres registrar un lugar?</p>
             <button
               className="popup-button popup-button-blue"
-              onClick={() => alert("Aquí irá tu lógica de crear lugar")}
+               onClick={onCrearRegistro}
             >
               Crear registro
             </button>

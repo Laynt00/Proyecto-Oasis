@@ -3,7 +3,8 @@ import { useState } from "react";
 import { app } from "../assets/firebase";
 import {
   createUserWithEmailAndPassword,
-  getAuth
+  getAuth,
+  updateProfile
 } from "firebase/auth";
 
 import nameIcon from "../assets/nameIcon.png";
@@ -14,22 +15,35 @@ import { useAuth } from "./AuthContext";
 export default function RegisterPage() {
   const navigate = useNavigate();
   const auth = getAuth(app);
-  const { login } = useAuth(); // ✅ Hook DENTRO del componente
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
   const [name, setName] = useState("");
-
+  const [error, setError] = useState("");
 
   const HandleSignUp = async (e) => {
     e.preventDefault();
+    setError("");
+
+    if (password !== repeatPassword) {
+      setError("Las contraseñas no coinciden.");
+      return;
+    }
+
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      console.log("Usuario creado exitosamente.");
-      login(); // ✅ activa la sesión
-      navigate("/home");
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+      await updateProfile(userCredential.user, {
+        displayName: name,
+      });
+
+      console.log("Usuario creado exitosamente con nombre.");
+      login(); // activa la sesión (esto depende de tu AuthContext)
+      navigate("/map"); // redirige al mapa
     } catch (error) {
-      console.log(error.message);
+      setError(error.message);
     }
   };
 
@@ -47,10 +61,10 @@ export default function RegisterPage() {
             <input 
               type="text" 
               value={name}
-              onChange={(e) =>setNombre(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
               placeholder="Nombre"
               required
-              />
+            />
           </div>
 
           <div className="input-wrapper">
@@ -77,10 +91,18 @@ export default function RegisterPage() {
 
           <div className="input-wrapper">
             <img src={passwordIcon} className="form-icon" />
-            <input type="password" placeholder="Repetir contraseña" />
+            <input
+              type="password"
+              value={repeatPassword}
+              onChange={(e) => setRepeatPassword(e.target.value)}
+              placeholder="Repetir contraseña"
+              required
+            />
           </div>
 
-          <button className="button-register-form" onClick={HandleSignUp}>
+          {error && <p className="error">{error}</p>}
+
+          <button className="button-register-form" type="submit">
             Registrarse
           </button>
         </form>
