@@ -1,6 +1,7 @@
 package com.backend.backend;
 
 import com.backend.backend.model.DogPark;
+import com.backend.backend.model.ResourceType;
 import com.backend.backend.repository.DogParkRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,7 +60,8 @@ public class DogParkDataLoader implements CommandLineRunner {
                         null,  // comment
                         coordX,
                         coordY,
-                        ""        // photo vacía por defecto
+                        "",        // photo vacía por defecto
+                        ResourceType.DOG_PARK
                 );
 
                 dogParks.add(dogPark);

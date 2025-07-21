@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/resources")
+@CrossOrigin(origins = "*") // Permite cualquier origen
 public class ResourceController {
     private final ResourceRepository resourceRepository;
     private final CommentRepository commentRepository;

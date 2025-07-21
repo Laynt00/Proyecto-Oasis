@@ -1,6 +1,7 @@
 package com.backend.backend;
 
 import com.backend.backend.model.Font;
+import com.backend.backend.model.ResourceType;
 import com.backend.backend.repository.FontRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,7 +61,8 @@ public class FontDataLoader implements CommandLineRunner {
                         coordX,
                         coordY,
                         "active",  // status por defecto
-                        ""        // photo vacía por defecto
+                        "", // photo vacía por defecto
+                        ResourceType.FONT
                 );
 
                 fonts.add(font);

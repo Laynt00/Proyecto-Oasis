@@ -11,8 +11,8 @@ public class DogPark extends Resource {
     // Constructores
     public DogPark() {}
 
-    public DogPark(String name, Comment comment, Float coord_x, Float coord_y, String photo) {
-        super(name, comment, coord_x, coord_y);
+    public DogPark(String name, Comment comment, Float coord_x, Float coord_y, String photo, ResourceType type) {
+        super(name, comment, coord_x, coord_y, type);
         this.photo = photo;
     }
 

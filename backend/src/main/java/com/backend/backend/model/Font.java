@@ -13,8 +13,8 @@ public class Font extends Resource {
     // Constructores, getters y setters
     public Font() {}
 
-    public Font(String name, Comment comment, Float coord_x, Float coord_y, String status, String photo) {
-        super(name, comment, coord_x, coord_y);
+    public Font(String name, Comment comment, Float coord_x, Float coord_y, String status, String photo, ResourceType type) {
+        super(name, comment, coord_x, coord_y, type);
         this.status = status;
         this.photo = photo;
     }
