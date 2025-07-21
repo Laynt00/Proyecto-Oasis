@@ -48,7 +48,8 @@ function Home() {
 	const [geoJsonData, setGeoJsonData] = useState(null);
 	const [selectedSource, setSelectedSource] = useState(null);
 	const [showLoginPopup, setShowLoginPopup] = useState(false);
-	const [showRegistroPopup, setShowRegistroPopup] = useState(false);
+	const [showRegistroPopup, setShowRegistroPopup] = useState(false);	const [userPosition, setUserPosition] = useState(null);
+	const [routeGeoJson, setRouteGeoJson] = useState(null);
 
 	const mapRef = useRef(null);
 
@@ -133,7 +134,6 @@ function Home() {
 				type: "FeatureCollection",
 				features: convertedFeatures
 			});
-
 		} catch (error) {
 			console.error("Error fetching resources:", error);
 		}
@@ -143,18 +143,34 @@ function Home() {
 		fetchResources();
 	}, []);
 
-	// Configuración de iconos de Leaflet
-	const DefaultIcon = L.icon({
-		iconUrl: ubiUsuarioImg,
-		shadowUrl: iconShadow,
-		iconSize: [38, 62],
-		iconAnchor: [18, 61],
-		popupAnchor: [1, -34],
-		shadowSize: [41, 41],
-	});
-	L.Marker.prototype.options.icon = DefaultIcon;
+	useEffect(() => {
+		console.log("Entrando en el cálculo de ruta", selectedSource, userPosition);
+		if (!selectedSource || !userPosition) return;
+		console.log("Calculando...")
 
-	const FontIcon = L.icon({
+		const fetchRoute = async () => {
+			const from = `${userPosition.lng},${userPosition.lat}`;
+			const to = `${selectedSource.geometry.coordinates[0]},${selectedSource.geometry.coordinates[1]}`;
+			try {
+				const res = await fetch(`https://router.project-osrm.org/route/v1/foot/${from};${to}?overview=full&geometries=geojson`);
+				const data = await res.json();
+				if (data.routes && data.routes.length > 0) {
+					console.log("Estableciendo ruta")
+					setRouteGeoJson({
+						type: "Feature",
+						geometry: data.routes[0].geometry,
+						properties: {}
+					});
+				}
+			} catch (error) {
+				console.error("Error fetching route:", error);
+			}
+		};
+
+		fetchRoute();
+	}, [selectedSource, userPosition]);
+
+	const DefaultIcon = L.icon({
 		iconUrl: ubiFuenteImg,
 		shadowUrl: iconShadow,
 		iconSize: [38, 62],
@@ -162,6 +178,9 @@ function Home() {
 		popupAnchor: [1, -34],
 		shadowSize: [41, 41],
 	});
+
+	// Configuración de iconos de Leaflet
+	L.Marker.prototype.options.icon = DefaultIcon;
 
 	const DogParkIcon = L.icon({
 		iconUrl: ubiPerroImg,
@@ -185,12 +204,12 @@ function Home() {
 		if (feature.properties && feature.properties.nombre) {
 			const popupDiv = document.createElement("div");
 			const tipo = feature.properties.tipo;
-			const nombre = feature.properties.nombre;
 
 			let tipoTexto = '';
-			let colorBoton = '#4CAF50'; // Color por defecto (verde)
+			let colorBoton = '#4CAF50';
+			let colorRuta = '#06a4e2ff';
 
-			if (tipo === 'dog_park') {
+			if (tipo === 'dogpark') {
 				tipoTexto = '<em>Parque para perros</em><br/>';
 				colorBoton = '#FFA500';
 			} else if (tipo === 'bench') {
@@ -201,18 +220,30 @@ function Home() {
 			}
 
 			popupDiv.innerHTML = `
-        <strong>${feature.properties.nombre}</strong><br/>
-        ${tipoTexto}
-        <button class="more-info-btn" style="
-          margin-top: 8px;
-          padding: 4px 8px;
-          background-color: ${colorBoton};
-          color: white;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-        ">+info</button>
-      `;
+			<strong>${feature.properties.nombre}</strong><br/>
+			${tipoTexto}
+			<div style="display: flex; gap: 8px; margin-top: 8px;">
+				<button class="more-info-btn" style="
+				padding: 4px 8px;
+				background-color: ${colorBoton};
+				color: white;
+				border: none;
+				border-radius: 4px;
+				cursor: pointer;
+				flex-shrink: 0;
+				">+info</button>
+
+				<button class="route-btn" style="
+				padding: 4px 8px;
+				background-color: ${colorRuta};
+				color: white;
+				border: none;
+				border-radius: 4px;
+				cursor: pointer;
+				flex-shrink: 0;
+				">Ruta</button>
+			</div>
+			`;
 
 			popupDiv.querySelector(".more-info-btn").addEventListener("click", async (e) => {
 				e.stopPropagation();
@@ -243,7 +274,7 @@ function Home() {
 		} else if (feature.properties.tipo === 'bench') {
 			return L.marker(latlng, { icon: BenchIcon });
 		} else {
-			return L.marker(latlng, { icon: FontIcon });
+			return L.marker(latlng, { icon: DefaultIcon });
 		}
 	};
 
@@ -255,6 +286,7 @@ function Home() {
 			},
 			locationfound(e) {
 				setPosition(e.latlng);
+				setUserPosition(e.latlng);
 				map.flyTo(e.latlng, map.getZoom());
 			},
 		});
@@ -294,7 +326,10 @@ function Home() {
 
 			<div className="map-container" style={{ position: 'relative' }}>
 				{selectedSource && (
-					<div className="overlay" onClick={() => setSelectedSource(null)}></div>
+					<div className="overlay" onClick={() => {
+						setSelectedSource(null);
+						setRouteGeoJson(null);
+					}}></div>
 				)}
 
 				<MapContainer
@@ -317,11 +352,10 @@ function Home() {
 					</Marker>
 					<LocationMarker />
 					{geoJsonData && (
-						<GeoJSON
-							data={geoJsonData}
-							onEachFeature={onEachFeature}
-							pointToLayer={pointToLayer}
-						/>
+						<GeoJSON data={geoJsonData} onEachFeature={onEachFeature} pointToLayer={pointToLayer} />
+					)}
+					{routeGeoJson && (
+						<GeoJSON data={routeGeoJson} style={{ color: 'blue', weight: 4 }} />
 					)}
 				</MapContainer>
 
