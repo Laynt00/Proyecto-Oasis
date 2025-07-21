@@ -47,14 +47,16 @@ function Home() {
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [selectedSource, setSelectedSource] = useState(null);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
-   const [showRegistroPopup, setShowRegistroPopup] = useState(false);
-
+  const [showRegistroPopup, setShowRegistroPopup] = useState(false);
+  const [activeFilters, setActiveFilters] = useState([]);
   const mapRef = useRef(null);
+  
+
 
   // ✅ NUEVOS STATES PARA COORDENADAS A LAS QUE ZOOMEAR
   const [flyToLat, setFlyToLat] = useState(null);
   const [flyToLon, setFlyToLon] = useState(null);
-
+ 
   const handleBuscarDireccion = async (direccion) => {
     try {
       console.log("Buscando:", direccion);
@@ -246,30 +248,47 @@ function Home() {
 		}
 	};
 
-  function LocationMarker() {
-    const [position, setPosition] = useState(null);
-    const map = useMapEvents({
-      click() {
-        map.locate();
-      },
-      locationfound(e) {
-        setPosition(e.latlng);
-        map.flyTo(e.latlng, map.getZoom());
-      },
-    });
+  function LocationMarker({ setUserLocation }) {
+  const [position, setPosition] = useState(null);
+  const map = useMapEvents({
+    click() {
+      map.locate();
+    },
+    locationfound(e) {
+      setPosition(e.latlng);
+      setUserLocation(e.latlng); // 🔥 Guardar ubicación
+      map.flyTo(e.latlng, map.getZoom());
+    },
+  });
 
-    return position === null ? null : (
-      <Marker position={position}>
-        <Popup>You are here</Popup>
-      </Marker>
-    );
-  }
+  return position === null ? null : (
+    <Marker position={position}>
+      <Popup>Estás aquí</Popup>
+    </Marker>
+  );
+}
+
 
   const initialPosition = [36.72, -4.42];
 
   const handleFilterChange = (filters) => {
-    console.log("Filtros seleccionados:", filters);
+    setActiveFilters(filters);
   };
+
+  console.log("Filtros activos en render:", activeFilters);
+
+  if (geoJsonData) {
+  const tiposUnicos = new Set(geoJsonData.features.map(f => f.properties.tipo));
+  console.log("Tipos detectados en features:", Array.from(tiposUnicos));
+}
+
+const filteredGeoJson = geoJsonData && {
+  ...geoJsonData,
+  features: geoJsonData.features.filter(feature =>
+    activeFilters.length === 0 || activeFilters.includes(feature.properties.tipo)
+  )
+};
+
 
   return (
     <div className="App">
@@ -314,12 +333,20 @@ function Home() {
           <Marker position={initialPosition}>
             <Popup>Estás aquí</Popup>
           </Marker>
-          <LocationMarker />
-          {geoJsonData && (
+          <LocationMarker setUserLocation={setUserLocation} />
+          {filteredGeoJson && (
             <GeoJSON
-              data={geoJsonData}
+              key={JSON.stringify(activeFilters)} // fuerza rerender
+              data={filteredGeoJson}
               onEachFeature={onEachFeature}
               pointToLayer={pointToLayer}
+            />
+          )}
+          
+          {routeCoordinates && (
+            <Polyline
+              positions={routeCoordinates}
+              pathOptions={{ color: 'blue', weight: 4, dashArray: '5,10' }}
             />
           )}
         </MapContainer>
@@ -377,6 +404,22 @@ function Home() {
               resourceId={selectedSource.id}
               resourceType={selectedSource.type.toLowerCase()}
             />
+            {/* ✅ BOTÓN DE RUTA AÑADIDO */}
+            <button
+              className="button-login-form"
+              style={{ marginTop: '1rem' }}
+              onClick={() => {
+                if (userLocation && selectedSource?.geometry?.coordinates) {
+                  const destino = {
+                    lat: selectedSource.geometry.coordinates[1],
+                    lng: selectedSource.geometry.coordinates[0]
+                  };
+                  setRouteCoordinates([userLocation, destino]);
+                }
+              }}
+            >
+              Ruta
+            </button>
           </div>
         )}
       </div>
