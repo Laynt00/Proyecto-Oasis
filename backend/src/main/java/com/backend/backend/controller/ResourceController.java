@@ -5,6 +5,7 @@ import com.backend.backend.repository.CommentRepository;
 import com.backend.backend.repository.ResourceRepository;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import org.hibernate.Hibernate;
 import org.springframework.http.HttpStatus;
 import java.util.List;
 
@@ -28,7 +29,11 @@ public class ResourceController {
     @GetMapping("/{id}")
     public ResponseEntity<Resource> getResourceById(@PathVariable Long id) {
         return resourceRepository.findById(id)
-                .map(ResponseEntity::ok)
+                .map(resource -> {
+                    // Inicializar la colección de comentarios si es LAZY
+                    Hibernate.initialize(resource.getComment());
+                    return ResponseEntity.ok(resource);
+                })
                 .orElse(ResponseEntity.notFound().build());
     }
 

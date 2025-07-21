@@ -13,6 +13,10 @@ public class Comment {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "resource_id")
+    private Resource resource;
+
     @Column(nullable = false, columnDefinition = "TEXT")
     private String text;
 
@@ -47,5 +51,14 @@ public class Comment {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    // Add these missing getter and setter for resource
+    public Resource getResource() {
+        return resource;
+    }
+
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 }

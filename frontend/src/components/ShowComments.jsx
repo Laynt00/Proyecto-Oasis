@@ -1,33 +1,23 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function ShowComments({ resourceId, resourceType }) {
-    const url = `http://localhost:8080/api/comments?resourceId=${resourceId}&resourceType=${resourceType}`;
-    const [comments, setComments] = useState([]);
+export default function ShowComments({ resourceId, comments: initialComments }) {
+    const [comments, setComments] = useState(initialComments || []);
     const [user, setUser] = useState(1); // ID del usuario
     const [comment, setComment] = useState('');
 
+    // Actualiza los comentarios cuando cambia el recurso
     useEffect(() => {
-        getComments();
-    }, [resourceId, resourceType]); // Vuelve a cargar cuando cambia el recurso
-
-    const getComments = async () => {
-        try {
-            const response = await axios.get(url);
-            setComments(response.data);
-        } catch (error) {
-            console.error("Error fetching comments:", error);
-        }
-    };
+        setComments(initialComments || []);
+    }, [resourceId, initialComments]);
 
     const handleCommentSubmit = async () => {
         if (!comment.trim()) return;
         try {
-            const response = await axios.post(url, {
+            const response = await axios.post("http://localhost:8080/api/comments", {
                 user: { id: user },
                 text: comment,
-                resourceId,
-                resourceType
+                resource: { id: resourceId } // Envía el recurso asociado
             });
             setComments([...comments, response.data]);
             setComment("");
@@ -51,7 +41,7 @@ export default function ShowComments({ resourceId, resourceType }) {
                 <div key={comentario.id} className="comentario">
                     <span>
                         <strong>{comentario.user?.name || 'Usuario anónimo'}</strong>
-                        • {new Date(comentario.createdAt).toLocaleDateString()}
+                        • {comentario.createdAt ? new Date(comentario.createdAt).toLocaleDateString() : 'Ahora'}
                     </span>
                     <p>{comentario.text}</p>
                     {comentario.user?.id === user && (
