@@ -76,4 +76,12 @@ public abstract class Resource {
     public void setCoord_y(Float coord_y) {
         this.coord_y = coord_y;
     }
+
+    public ResourceType getType() {
+        return type;
+    }
+
+    public void setType(ResourceType type) {
+        this.type = type;
+    }
 }
