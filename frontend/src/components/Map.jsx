@@ -106,7 +106,7 @@ function Home() {
   };
   const fetchResources = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/fonts");
+      const response = await fetch("http://localhost:8080/api/resources");
       const data = await response.json();
 
       const convertedFeatures = data.map((item) => {
@@ -116,7 +116,7 @@ function Home() {
           properties: {
             nombre: item.name,
             id: item.id,
-            tipo: item.type.toLowerCase(), // Convertimos a minúsculas para consistencia
+            tipo: item.type ? item.type.toLowerCase() : 'desconocido', // Convertimos a minúsculas para consistencia
             status: item.status || 'OK',
             photo: item.photo || '',
             comment_id: item.comment_id
