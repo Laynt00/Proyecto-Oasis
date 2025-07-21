@@ -50,11 +50,13 @@ function Home() {
   const [showRegistroPopup, setShowRegistroPopup] = useState(false);
   const [activeFilters, setActiveFilters] = useState([]);
   const mapRef = useRef(null);
+  
+
 
   // ✅ NUEVOS STATES PARA COORDENADAS A LAS QUE ZOOMEAR
   const [flyToLat, setFlyToLat] = useState(null);
   const [flyToLon, setFlyToLon] = useState(null);
-
+ 
   const handleBuscarDireccion = async (direccion) => {
     try {
       console.log("Buscando:", direccion);
@@ -246,24 +248,26 @@ function Home() {
 		}
 	};
 
-  function LocationMarker() {
-    const [position, setPosition] = useState(null);
-    const map = useMapEvents({
-      click() {
-        map.locate();
-      },
-      locationfound(e) {
-        setPosition(e.latlng);
-        map.flyTo(e.latlng, map.getZoom());
-      },
-    });
+  function LocationMarker({ setUserLocation }) {
+  const [position, setPosition] = useState(null);
+  const map = useMapEvents({
+    click() {
+      map.locate();
+    },
+    locationfound(e) {
+      setPosition(e.latlng);
+      setUserLocation(e.latlng); // 🔥 Guardar ubicación
+      map.flyTo(e.latlng, map.getZoom());
+    },
+  });
 
-    return position === null ? null : (
-      <Marker position={position}>
-        <Popup>You are here</Popup>
-      </Marker>
-    );
-  }
+  return position === null ? null : (
+    <Marker position={position}>
+      <Popup>Estás aquí</Popup>
+    </Marker>
+  );
+}
+
 
   const initialPosition = [36.72, -4.42];
 
@@ -329,7 +333,7 @@ const filteredGeoJson = geoJsonData && {
           <Marker position={initialPosition}>
             <Popup>Estás aquí</Popup>
           </Marker>
-          <LocationMarker />
+          <LocationMarker setUserLocation={setUserLocation} />
           {filteredGeoJson && (
             <GeoJSON
               key={JSON.stringify(activeFilters)} // fuerza rerender
@@ -338,7 +342,13 @@ const filteredGeoJson = geoJsonData && {
               pointToLayer={pointToLayer}
             />
           )}
-
+          
+          {routeCoordinates && (
+            <Polyline
+              positions={routeCoordinates}
+              pathOptions={{ color: 'blue', weight: 4, dashArray: '5,10' }}
+            />
+          )}
         </MapContainer>
 
         {selectedSource && (
@@ -394,6 +404,22 @@ const filteredGeoJson = geoJsonData && {
               resourceId={selectedSource.id}
               resourceType={selectedSource.type.toLowerCase()}
             />
+            {/* ✅ BOTÓN DE RUTA AÑADIDO */}
+            <button
+              className="button-login-form"
+              style={{ marginTop: '1rem' }}
+              onClick={() => {
+                if (userLocation && selectedSource?.geometry?.coordinates) {
+                  const destino = {
+                    lat: selectedSource.geometry.coordinates[1],
+                    lng: selectedSource.geometry.coordinates[0]
+                  };
+                  setRouteCoordinates([userLocation, destino]);
+                }
+              }}
+            >
+              Ruta
+            </button>
           </div>
         )}
       </div>

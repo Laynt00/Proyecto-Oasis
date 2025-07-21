@@ -74,6 +74,19 @@ export default function LoginPage() {
           <button type="submit" className="button-login-form">
             Iniciar Sesión
           </button>
+          <p
+            onClick={() => navigate("/forgot-password")}
+            style={{
+              marginTop: "1rem",
+              textAlign: "center",
+              color: "#007bff",
+              textDecoration: "underline",
+              cursor: "pointer",
+            }}
+          >
+            ¿Olvidaste tu contraseña?
+          </p>
+
         </form>
       </div>
     </div>
