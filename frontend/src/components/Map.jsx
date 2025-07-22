@@ -57,8 +57,8 @@ function Home() {
   const [routeCoordinates, setRouteCoordinates] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
   const mapRef = useRef(null);
+  const [showUserMarker, setShowUserMarker] = useState(false);
   
-
 
   // ✅ NUEVOS STATES PARA COORDENADAS A LAS QUE ZOOMEAR
   const [flyToLat, setFlyToLat] = useState(null);
@@ -330,6 +330,34 @@ const filteredGeoJson = geoJsonData && {
 console.log("Filtros activos en render:", activeFilters);
 
 
+  const handleMyLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const newPosition = [latitude, longitude];
+          
+          // Update states
+          setUserLocation(newPosition);
+          setUserPosition({ lat: latitude, lng: longitude });
+          setShowUserMarker(true);
+          
+          // Fly to user's location
+          if (mapRef.current) {
+            mapRef.current.flyTo(newPosition, 18);
+          }
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          alert("No se pudo obtener tu ubicación. Asegúrate de permitir el acceso a la ubicación.");
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+      );
+    } else {
+      alert("Geolocalización no es soportada por este navegador.");
+    }
+  };
+
   return (
     <div className="App">
       <Header onCrearRegistro={() => setShowRegistroPopup(true)} />
@@ -364,7 +392,7 @@ console.log("Filtros activos en render:", activeFilters);
           zoom={16}
           scrollWheelZoom={true}
           zoomControl={false}
-          whenCreated={(mapInstance) => (mapRef.current = mapInstance)}
+          ref={mapRef}
         >
           <TileLayer
             attribution='&copy; OpenStreetMap contributors'
@@ -373,13 +401,17 @@ console.log("Filtros activos en render:", activeFilters);
 
           {flyToLat && flyToLon && <MapFlyTo lat={flyToLat} lon={flyToLon} />}
 
-          <Marker position={initialPosition}>
-            <Popup>Estás aquí</Popup>
-          </Marker>
           <LocationMarker
             setUserLocation={setUserLocation}
             setUserPosition={setUserPosition}
           />
+
+          {/* User location marker from button */}
+          {showUserMarker && userLocation && (
+            <Marker position={userLocation} icon={UserIcon}>
+              <Popup>Tu ubicación actual</Popup>
+            </Marker>
+          )}
           
           {filteredGeoJson && (
             <GeoJSON
@@ -404,6 +436,32 @@ console.log("Filtros activos en render:", activeFilters);
             />
           )}
         </MapContainer>
+
+        {/* My Location Button */}
+        <button
+          onClick={handleMyLocation}
+          className="my-location-btn"
+          style={{
+            position: 'absolute',
+            bottom: '20px',
+            right: '20px',
+            width: '50px',
+            height: '50px',
+            borderRadius: '50%',
+            backgroundColor: '#fff',
+            border: '2px solid #ccc',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '20px',
+            zIndex: 1000
+          }}
+          title="Mi ubicación"
+        >
+          📍
+        </button>
 
         {selectedSource && (
           <ResourcePopup
