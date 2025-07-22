@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { use, useState } from "react";
 import { app } from "../assets/firebase";
 import {
   createUserWithEmailAndPassword,
@@ -22,6 +22,7 @@ export default function RegisterPage() {
   const [repeatPassword, setRepeatPassword] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState("");
+  const {setUserId} = useAuth();
 
   const HandleSignUp = async (e) => {
     e.preventDefault();
@@ -40,7 +41,7 @@ export default function RegisterPage() {
       });
 
       // Aquí puedes hacer una petición a tu API para crear el usuario en la base de datos
-      await fetch("http://localhost:8080/api/users", {
+      const response = await fetch("http://localhost:8080/api/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -49,6 +50,13 @@ export default function RegisterPage() {
           name: name
         })
       });
+      if (!response.ok) {
+        throw new Error("Error al crear el usuario en la base de datos.");
+      }
+      const userData = await response.json();
+      console.log("Usuario creado en la base de datos:", userData);
+      console.log("Firebase User:", userCredential.user);
+      setUserId(userData.id );
 
       console.log("Usuario creado exitosamente con nombre.");
       login(); // activa la sesión (esto depende de tu AuthContext)

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./ShowComments.css"; 
+import { useAuth } from "./AuthContext";
 
 export default function ShowComments({ resourceId }) {
   const [comments, setComments] = useState([]);
-  const [userId] = useState(1); // Simulación de usuario autenticado
+  const {userId} = useAuth();
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [editingId, setEditingId] = useState(null);
