@@ -285,28 +285,6 @@ function Home() {
     }
   };
   
-  function LocationMarker({ setUserLocation, setUserPosition }) {
-  const [position, setPosition] = useState(null);
-  const map = useMapEvents({
-    click() {
-      map.locate();
-    },
-    locationfound(e) {
-      setPosition(e.latlng);
-      setUserLocation(e.latlng); 
-      setUserPosition(e.latlng);
-      map.flyTo(e.latlng, map.getZoom());
-    },
-  });
-
-  return position === null ? null : (
-    <Marker position={position}>
-      <Popup>Estás aquí</Popup>
-    </Marker>
-  );
-}
-
-
   const initialPosition = [36.72, -4.42];
 
   const handleFilterChange = (filters) => {
@@ -400,11 +378,6 @@ console.log("Filtros activos en render:", activeFilters);
           />
 
           {flyToLat && flyToLon && <MapFlyTo lat={flyToLat} lon={flyToLon} />}
-
-          <LocationMarker
-            setUserLocation={setUserLocation}
-            setUserPosition={setUserPosition}
-          />
 
           {/* User location marker from button */}
           {showUserMarker && userLocation && (
