@@ -5,7 +5,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  /*background: rgba(0, 0, 0, 0.5);Creo que esto es lo que hay que eliminar. Preguntar a Mario*/
   display: flex;
   justify-content: center;
   align-items: center;
