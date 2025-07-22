@@ -45,13 +45,6 @@ const ResourcePopup = ({ selectedSource, onClose }) => {
             </>
           )}
 
-          <p><small>Coordenadas:</small></p>
-          <p>
-            <strong>
-              {selectedSource.geometry?.coordinates[0]?.toFixed(6) || selectedSource.coord_x},
-              {selectedSource.geometry?.coordinates[1]?.toFixed(6) || selectedSource.coord_y}
-            </strong>
-          </p>
         </div>
       </div>
       <ShowComments
