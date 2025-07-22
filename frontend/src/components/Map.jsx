@@ -409,9 +409,6 @@ console.log("Filtros activos en render:", activeFilters);
 
           {flyToLat && flyToLon && <MapFlyTo lat={flyToLat} lon={flyToLon} />}
 
-          <Marker position={initialPosition}>
-            <Popup>Estás aquí</Popup>
-          </Marker>
           <LocationMarker
             setUserLocation={setUserLocation}
             setUserPosition={setUserPosition}
