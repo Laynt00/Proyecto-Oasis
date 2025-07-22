@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import "./ShowComments.css"; 
 
 export default function ShowComments({ resourceId }) {
   const [comments, setComments] = useState([]);
-  const [userId] = useState(1); // Simulamos un usuario autenticado con ID 1
+  const [userId] = useState(1); // Simulación de usuario autenticado
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [editText, setEditText] = useState("");
 
   useEffect(() => {
     if (resourceId) {
@@ -14,46 +17,79 @@ export default function ShowComments({ resourceId }) {
   }, [resourceId]);
 
   const fetchComments = async () => {
-  try {
-    const response = await axios.get(
-      `http://localhost:8080/api/comments/resource/${resourceId}`
-    );
-
-    setComments(Array.isArray(response.data) ? response.data : []);
-  } catch (error) {
-    console.error("Error al obtener comentarios:", error);
-    setComments([]); // ⛑ Asegura estado válido incluso en error
-  }
-};
-
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/comments/resource/${resourceId}`
+      );
+      setComments(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error("Error al obtener comentarios:", error);
+      setComments([]);
+    }
+  };
 
   const handleCommentSubmit = async () => {
     if (!comment.trim()) return;
-
     setSubmitting(true);
 
     const payload = {
-        user: { id: userId },
-        resource: { id: resourceId }, // 🔁 esto es esencial
-        text: comment.trim()
+      userId,
+      resourceId,
+      text: comment.trim(),
     };
 
-    console.log("Enviando comentario:", payload);
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/comments",
+        payload
+      );
+      setComments((prev) => [...prev, response.data]);
+      setComment("");
+    } catch (error) {
+      console.error("Error al enviar comentario:", error);
+      if (error.response) {
+        console.error("Respuesta del servidor:", error.response.data);
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    const confirm = window.confirm("¿Eliminar este comentario?");
+    if (!confirm) return;
 
     try {
-        const response = await axios.post(`http://localhost:8080/api/comments`, payload);
-        setComments((prev) => [...prev, response.data]);
-        setComment("");
+      await axios.delete(`http://localhost:8080/api/comments/${commentId}`);
+      setComments((prev) => prev.filter((c) => c.id !== commentId));
     } catch (error) {
-        console.error("Error al enviar comentario:", error);
-        if (error.response) {
-            console.error("Respuesta del servidor:", error.response.data);
-        }
-    } finally {
-        setSubmitting(false);
+      console.error("Error al eliminar comentario:", error);
+      alert("No se pudo eliminar el comentario.");
     }
-};
+  };
 
+  const handleUpdateComment = async (commentId) => {
+    if (!editText.trim()) return;
+
+    try {
+      const response = await axios.put(
+        `http://localhost:8080/api/comments/${commentId}`,
+        { text: editText.trim() }
+      );
+
+      setComments((prev) =>
+        prev.map((c) =>
+          c.id === commentId ? { ...c, text: response.data.text } : c
+        )
+      );
+
+      setEditingId(null);
+      setEditText("");
+    } catch (error) {
+      console.error("Error al actualizar comentario:", error);
+      alert("No se pudo actualizar el comentario.");
+    }
+  };
 
   return (
     <div className="comentarios">
@@ -91,12 +127,52 @@ export default function ShowComments({ resourceId }) {
                 })
               : "Fecha desconocida"}
           </span>
-          <p>{comentario.text}</p>
+
+          {editingId === comentario.id ? (
+            <div className="edit-comment-box">
+              <input
+                type="text"
+                value={editText}
+                onChange={(e) => setEditText(e.target.value)}
+              />
+              <button
+                className="submit-comment-btn"
+                onClick={() => handleUpdateComment(comentario.id)}
+                disabled={!editText.trim()}
+              >
+                Guardar
+              </button>
+              <button
+                className="cancel-comment-btn"
+                onClick={() => {
+                  setEditingId(null);
+                  setEditText("");
+                }}
+              >
+                Cancelar
+              </button>
+            </div>
+          ) : (
+            <p>{comentario.text}</p>
+          )}
 
           {comentario.userId === userId && (
             <div className="comment-actions">
-              <button className="edit-comment-btn">Editar</button>
-              <button className="delete-comment-btn">Eliminar</button>
+              <button
+                className="edit-comment-btn"
+                onClick={() => {
+                  setEditingId(comentario.id);
+                  setEditText(comentario.text);
+                }}
+              >
+                Editar
+              </button>
+              <button
+                className="delete-comment-btn"
+                onClick={() => handleDeleteComment(comentario.id)}
+              >
+                Eliminar
+              </button>
             </div>
           )}
         </div>

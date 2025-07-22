@@ -1,13 +1,19 @@
 package com.backend.backend.controller;
 
 import com.backend.backend.dto.CommentDTO;
+import com.backend.backend.dto.CommentInputDTO;
 import com.backend.backend.model.Comment;
+import com.backend.backend.model.Resource;
+import com.backend.backend.model.User;
 import com.backend.backend.repository.CommentRepository;
+import com.backend.backend.repository.ResourceRepository;
 import com.backend.backend.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/comments")
@@ -15,6 +21,9 @@ import java.util.List;
 public class CommentController {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
+
+    @Autowired
+    private ResourceRepository resourceRepository;
 
     public CommentController(CommentRepository commentRepository, UserRepository userRepository) {
         this.commentRepository = commentRepository;
@@ -56,24 +65,45 @@ public class CommentController {
 
 
     @PostMapping
-    public ResponseEntity<Comment> createComment(@RequestBody Comment comment) {
-        // Verificar que el usuario existe
-        if (!userRepository.existsById(comment.getUser().getId())) {
-            return ResponseEntity.badRequest().build();
+    public ResponseEntity<CommentDTO> createComment(@RequestBody CommentInputDTO dto) {
+        Optional<User> userOpt = userRepository.findById(dto.getUserId());
+        Optional<Resource> resourceOpt = resourceRepository.findById(dto.getResourceId());
+
+        if (userOpt.isEmpty() || resourceOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body(null);
         }
-        Comment savedComment = commentRepository.save(comment);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedComment);
+
+        Comment comment = new Comment(userOpt.get(), resourceOpt.get(), dto.getText());
+        commentRepository.save(comment);
+
+        CommentDTO response = new CommentDTO(
+                comment.getId(),
+                comment.getText(),
+                userOpt.get().getId(),
+                userOpt.get().getName(),
+                comment.getCreatedAt()
+        );
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Comment> updateComment(@PathVariable Long id, @RequestBody Comment commentDetails) {
+    public ResponseEntity<CommentDTO> updateComment(@PathVariable Long id, @RequestBody Comment commentDetails) {
         return commentRepository.findById(id)
                 .map(comment -> {
                     comment.setText(commentDetails.getText());
-                    return ResponseEntity.ok(commentRepository.save(comment));
+                    Comment updated = commentRepository.save(comment);
+                    return ResponseEntity.ok(new CommentDTO(
+                            updated.getId(),
+                            updated.getText(),
+                            updated.getUser().getId(),
+                            updated.getUser().getName(),
+                            updated.getCreatedAt()
+                    ));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
