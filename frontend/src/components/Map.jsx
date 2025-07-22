@@ -7,8 +7,7 @@ import {
   Popup,
   useMapEvents,
   GeoJSON,
-  useMap,
-  Polyline
+  useMap
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -51,17 +50,13 @@ function Home() {
   const [routeTarget, setRouteTarget] = useState(null); // Nuevo estado para el objetivo de ruta
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [showRegistroPopup, setShowRegistroPopup] = useState(false);
-  const [activeFilters, setActiveFilters] = useState([]);
   const [userPosition, setUserPosition] = useState(null);
   const [routeGeoJson, setRouteGeoJson] = useState(null);
-  const [routeCoordinates, setRouteCoordinates] = useState([]);
-  const [userLocation, setUserLocation] = useState(null);
-  const mapRef = useRef(null);
 
-  // ✅ NUEVOS STATES PARA COORDENADAS A LAS QUE ZOOMEAR
+  const mapRef = useRef(null);
   const [flyToLat, setFlyToLat] = useState(null);
   const [flyToLon, setFlyToLon] = useState(null);
- 
+
   const handleBuscarDireccion = async (direccion) => {
     try {
       const response = await fetch(
@@ -283,47 +278,31 @@ function Home() {
     }
   };
 
-  function LocationMarker({ setUserLocation }) {
-  const [position, setPosition] = useState(null);
-  const map = useMapEvents({
-    click() {
-      map.locate();
-    },
-    locationfound(e) {
-      setPosition(e.latlng);
-      setUserLocation(e.latlng); // 🔥 Guardar ubicación
-      map.flyTo(e.latlng, map.getZoom());
-    },
-  });
+  function LocationMarker() {
+    const [position, setPosition] = useState(null);
+    const map = useMapEvents({
+      click() {
+        map.locate();
+      },
+      locationfound(e) {
+        setPosition(e.latlng);
+        setUserPosition(e.latlng);
+        map.flyTo(e.latlng, map.getZoom());
+      },
+    });
 
-  return position === null ? null : (
-    <Marker position={position}>
-      <Popup>Estás aquí</Popup>
-    </Marker>
-  );
-}
-
+    return position === null ? null : (
+      <Marker position={position}>
+        <Popup>Estás aquí</Popup>
+      </Marker>
+    );
+  }
 
   const initialPosition = [36.72, -4.42];
 
   const handleFilterChange = (filters) => {
-    setActiveFilters(filters);
+    console.log("Filtros seleccionados:", filters);
   };
-
-  console.log("Filtros activos en render:", activeFilters);
-
-  if (geoJsonData) {
-  const tiposUnicos = new Set(geoJsonData.features.map(f => f.properties.tipo));
-  console.log("Tipos detectados en features:", Array.from(tiposUnicos));
-}
-
-const filteredGeoJson = geoJsonData && {
-  ...geoJsonData,
-  features: geoJsonData.features.filter(feature =>
-    activeFilters.length === 0 || activeFilters.includes(feature.properties.tipo)
-  )
-};
-
 
   return (
     <div className="App">
@@ -367,18 +346,7 @@ const filteredGeoJson = geoJsonData && {
           />
 
           {flyToLat && flyToLon && <MapFlyTo lat={flyToLat} lon={flyToLon} />}
-
-          <Marker position={initialPosition}>
-            <Popup>Estás aquí</Popup>
-          </Marker>
-          <LocationMarker setUserLocation={setUserLocation} />
-          {filteredGeoJson && (
-            <GeoJSON
-              key={JSON.stringify(activeFilters)} // fuerza rerender
-              data={filteredGeoJson}
-              onEachFeature={onEachFeature}
-              pointToLayer={pointToLayer} />
-          )}
+          <LocationMarker />
           
           {geoJsonData && (
             <GeoJSON 
@@ -392,13 +360,6 @@ const filteredGeoJson = geoJsonData && {
             <GeoJSON 
               data={routeGeoJson} 
               style={{ color: 'blue', weight: 4 }} 
-            />
-          )}
-          
-          {routeCoordinates && (
-            <Polyline
-              positions={routeCoordinates}
-              pathOptions={{ color: 'blue', weight: 4, dashArray: '5,10' }}
             />
           )}
         </MapContainer>
