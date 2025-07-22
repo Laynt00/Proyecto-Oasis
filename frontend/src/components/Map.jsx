@@ -57,6 +57,8 @@ function Home() {
   const [routeCoordinates, setRouteCoordinates] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
   const mapRef = useRef(null);
+  
+
 
   // ✅ NUEVOS STATES PARA COORDENADAS A LAS QUE ZOOMEAR
   const [flyToLat, setFlyToLat] = useState(null);
@@ -282,8 +284,8 @@ function Home() {
       return L.marker(latlng, { icon: FontIcon });
     }
   };
-
-  function LocationMarker({ setUserLocation }) {
+  
+  function LocationMarker({ setUserLocation, setUserPosition }) {
   const [position, setPosition] = useState(null);
   const map = useMapEvents({
     click() {
@@ -291,7 +293,8 @@ function Home() {
     },
     locationfound(e) {
       setPosition(e.latlng);
-      setUserLocation(e.latlng); // 🔥 Guardar ubicación
+      setUserLocation(e.latlng); 
+      setUserPosition(e.latlng);
       map.flyTo(e.latlng, map.getZoom());
     },
   });
@@ -323,6 +326,8 @@ const filteredGeoJson = geoJsonData && {
     activeFilters.length === 0 || activeFilters.includes(feature.properties.tipo)
   )
 };
+
+console.log("Filtros activos en render:", activeFilters);
 
 
   return (
@@ -371,20 +376,17 @@ const filteredGeoJson = geoJsonData && {
           <Marker position={initialPosition}>
             <Popup>Estás aquí</Popup>
           </Marker>
-          <LocationMarker setUserLocation={setUserLocation} />
+          <LocationMarker
+            setUserLocation={setUserLocation}
+            setUserPosition={setUserPosition}
+          />
+          
           {filteredGeoJson && (
             <GeoJSON
-              key={JSON.stringify(activeFilters)} // fuerza rerender
+              key={JSON.stringify(activeFilters)}
               data={filteredGeoJson}
               onEachFeature={onEachFeature}
-              pointToLayer={pointToLayer} />
-          )}
-          
-          {geoJsonData && (
-            <GeoJSON 
-              data={geoJsonData} 
-              onEachFeature={onEachFeature} 
-              pointToLayer={pointToLayer} 
+              pointToLayer={pointToLayer}
             />
           )}
           

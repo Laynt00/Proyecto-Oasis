@@ -5,26 +5,24 @@ const FilterDropdown = ({ onFilterChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeFilters, setActiveFilters] = useState([]);
 
+  const options = [
+    { label: 'Fuentes', value: 'font' },
+    { label: 'Bancos', value: 'bench' },
+    { label: 'Parques', value: 'dog_park' }
+  ];
+
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
   const toggleFilter = (value) => {
-    let updatedFilters;
-    if (activeFilters.includes(value)) {
-      updatedFilters = activeFilters.filter((f) => f !== value);
-    } else {
-      updatedFilters = [...activeFilters, value];
-    }
-    setActiveFilters(updatedFilters);
-    onFilterChange(updatedFilters); // Comunica al padre (App)
-  };
+    const updatedFilters = activeFilters.includes(value)
+      ? activeFilters.filter((f) => f !== value)
+      : [...activeFilters, value];
 
-  const options = [
-  { label: 'Fuentes', value: 'font' },
-  { label: 'Bancos', value: 'bench' },
-  { label: 'Parques', value: 'dog_park' }
-  ];
+    setActiveFilters(updatedFilters);
+    onFilterChange(updatedFilters); // ✔️ Aquí se mandan los valores correctos
+  };
 
   return (
     <div className="dropdown-container">

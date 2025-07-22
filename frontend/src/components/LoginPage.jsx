@@ -31,7 +31,7 @@ export default function LoginPage() {
 
   return (
     <div className="login-page-div">
-      <button className="back-to-map" onClick={() => navigate("/home")}>
+      <button className="back-to-map" onClick={() => navigate("/map")}>
         Volver al mapa
       </button>
 
