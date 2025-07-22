@@ -30,31 +30,44 @@ export default function ShowComments({ resourceId }) {
   };
 
   const handleCommentSubmit = async () => {
-    if (!comment.trim()) return;
-    setSubmitting(true);
+  if (!comment.trim()) return;
 
-    const payload = {
-      userId,
-      resourceId,
-      text: comment.trim(),
-    };
+  if (!resourceId) {
+    alert("Error: No se encontró el recurso. Haz clic sobre una fuente para comentar.");
+    return;
+  }
 
-    try {
-      const response = await axios.post(
-        "http://localhost:8080/api/comments",
-        payload
-      );
-      setComments((prev) => [...prev, response.data]);
-      setComment("");
-    } catch (error) {
-      console.error("Error al enviar comentario:", error);
-      if (error.response) {
-        console.error("Respuesta del servidor:", error.response.data);
-      }
-    } finally {
-      setSubmitting(false);
-    }
+  if (!userId) {
+    alert("Debes iniciar sesión para comentar.");
+    return;
+  }
+
+  const payload = {
+    userId,
+    resourceId,
+    text: comment.trim(),
   };
+
+  setSubmitting(true);
+
+  try {
+    const response = await axios.post(
+      "http://localhost:8080/api/comments",
+      payload
+    );
+    setComments((prev) => [...prev, response.data]);
+    setComment("");
+  } catch (error) {
+    console.error("Error al enviar comentario:", error);
+    if (error.response) {
+      console.error("Respuesta del servidor:", error.response.data);
+    }
+    alert("No se pudo enviar el comentario.");
+  } finally {
+    setSubmitting(false);
+  }
+};
+
 
   const handleDeleteComment = async (commentId) => {
     const confirm = window.confirm("¿Eliminar este comentario?");

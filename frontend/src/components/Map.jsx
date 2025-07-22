@@ -285,29 +285,37 @@ function Home() {
     }
   };
   
-  function LocationMarker({ setUserLocation, setUserPosition }) {
-  const [position, setPosition] = useState(null);
+ function LocationMarker({ setUserLocation, setUserPosition, userPosition }) {
   const map = useMapEvents({
     click() {
       map.locate();
     },
     locationfound(e) {
-      setPosition(e.latlng);
-      setUserLocation(e.latlng); 
       setUserPosition(e.latlng);
+      setUserLocation(e.latlng);
       map.flyTo(e.latlng, map.getZoom());
     },
   });
 
-  return position === null ? null : (
-    <Marker position={position}>
+  const UserIcon = L.icon({
+    iconUrl: ubiUsuarioImg,
+    shadowUrl: iconShadow,
+    iconSize: [38, 62],
+    iconAnchor: [18, 61],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  });
+
+  return userPosition === null ? null : (
+    <Marker position={userPosition} icon={UserIcon}>
       <Popup>Estás aquí</Popup>
     </Marker>
   );
 }
 
 
-  const initialPosition = [36.72, -4.42];
+
+const initialPosition = [36.72, -4.42];
 
   const handleFilterChange = (filters) => {
     setActiveFilters(filters);
@@ -379,7 +387,9 @@ console.log("Filtros activos en render:", activeFilters);
           <LocationMarker
             setUserLocation={setUserLocation}
             setUserPosition={setUserPosition}
+            userPosition={userPosition}
           />
+
           
           {filteredGeoJson && (
             <GeoJSON
