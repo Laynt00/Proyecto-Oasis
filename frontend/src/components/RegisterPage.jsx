@@ -39,6 +39,17 @@ export default function RegisterPage() {
         displayName: name,
       });
 
+      // Aquí puedes hacer una petición a tu API para crear el usuario en la base de datos
+      await fetch("http://localhost:8080/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: userCredential.user.email,
+          is_admin: false,
+          name: name
+        })
+      });
+
       console.log("Usuario creado exitosamente con nombre.");
       login(); // activa la sesión (esto depende de tu AuthContext)
       navigate("/map"); // redirige al mapa
