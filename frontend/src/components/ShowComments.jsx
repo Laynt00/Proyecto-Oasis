@@ -1,64 +1,69 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function ShowComments({ resourceId, resourceType }) {
-    const url = `http://localhost:8080/api/comments?resourceId=${resourceId}&resourceType=${resourceType}`;
+export default function ShowComments({ resourceId }) {
     const [comments, setComments] = useState([]);
-    const [user, setUser] = useState(1); // ID del usuario
+    const [userId] = useState(1); // ID del usuario
     const [comment, setComment] = useState('');
 
     useEffect(() => {
-        getComments();
-    }, [resourceId, resourceType]); // Vuelve a cargar cuando cambia el recurso
+        if (resourceId) {
+            fetchComments();
+        }
+    }, [resourceId]);
 
-    const getComments = async () => {
+    const fetchComments = async () => {
         try {
-            const response = await axios.get(url);
+            const response = await axios.get(`http://localhost:8080/api/comments/resource/${resourceId}`);
             setComments(response.data);
         } catch (error) {
-            console.error("Error fetching comments:", error);
+            console.error("Error al obtener comentarios:", error);
         }
     };
 
     const handleCommentSubmit = async () => {
         if (!comment.trim()) return;
         try {
-            const response = await axios.post(url, {
-                user: { id: user },
+            const response = await axios.post(`http://localhost:8080/api/comments`, {
+                userId: userId,
                 text: comment,
-                resourceId,
-                resourceType
+                resourceId: resourceId
             });
             setComments([...comments, response.data]);
             setComment("");
         } catch (error) {
-            console.error("Error submitting comment:", error);
+            console.error("Error al enviar comentario:", error);
         }
     };
 
     return (
         <div className="comentarios">
             <h3>Comentarios</h3>
+
             <input
                 type="text"
                 placeholder="Deja tu comentario..."
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
             />
-            <button className="submit-comment-btn" onClick={handleCommentSubmit}>Comentar</button>
+            <button className="submit-comment-btn" onClick={handleCommentSubmit}>
+                Comentar
+            </button>
 
             {comments.map((comentario) => (
                 <div key={comentario.id} className="comentario">
                     <span>
-                        <strong>{comentario.user?.name || 'Usuario anónimo'}</strong>
-                        • {new Date(comentario.createdAt).toLocaleDateString()}
+                        <strong>{comentario.userName || "Usuario anónimo"}</strong>
+                        {" • "}
+                        {new Date(comentario.createdAt).toLocaleString()}
                     </span>
                     <p>{comentario.text}</p>
-                    {comentario.user?.id === user && (
-                        <>
+
+                    {comentario.userId === userId && (
+                        <div className="comment-actions">
                             <button className="edit-comment-btn">Editar</button>
                             <button className="delete-comment-btn">Eliminar</button>
-                        </>
+                        </div>
                     )}
                 </div>
             ))}
