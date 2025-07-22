@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
+@CrossOrigin(origins = "*") // Permite cualquier origen
 public class UserController {
     private final UserRepository userRepository;
 
