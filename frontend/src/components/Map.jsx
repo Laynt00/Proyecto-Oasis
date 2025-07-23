@@ -84,23 +84,25 @@ function Home() {
   };
 
   const handleSubmitRegistro = async (nuevoRegistro) => {
-    const formData = new FormData();
-    formData.append("nombre", nuevoRegistro.nombre);
-    formData.append("estado", nuevoRegistro.estado);
-    formData.append("imagen", nuevoRegistro.imagen);
-
-    try {
-      const response = await fetch("http://localhost:8080/api/crear-registro", {
-        method: "POST",
-        body: formData,
-      });
-      if (!response.ok) throw new Error("Error al crear el registro");
-      alert("Registro creado exitosamente");
-    } catch (error) {
-      alert("Error al enviar el registro: " + error.message);
-    }
-    setShowRegistroPopup(false);
-  };
+  try {
+    const response = await fetch("http://localhost:8080/api/resources", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(nuevoRegistro),
+    });
+    
+    if (!response.ok) throw new Error("Error al crear el registro");
+    
+    const data = await response.json();
+    alert("Registro creado exitosamente");
+    fetchResources(); // Actualiza la lista de recursos
+  } catch (error) {
+    alert("Error al enviar el registro: " + error.message);
+  }
+  setShowRegistroPopup(false);
+};
 
   const fetchResources = async () => {
     try {

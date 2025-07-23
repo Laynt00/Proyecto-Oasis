@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/resources")
-@CrossOrigin(origins = "*") // Permite cualquier origen
+@CrossOrigin(origins = "*")
 public class ResourceController {
     private final ResourceRepository resourceRepository;
     private final CommentRepository commentRepository;
@@ -30,6 +30,16 @@ public class ResourceController {
         return resourceRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<Resource> createResource(@RequestBody Resource resource) {
+        try {
+            Resource savedResource = resourceRepository.save(resource);
+            return new ResponseEntity<>(savedResource, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/{id}")
